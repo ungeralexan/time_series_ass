@@ -1,0 +1,48 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+
+\title{Advanced Time Series Analysis}
+\author{Alexander Unger}
+\date{December 2024}
+
+\begin{document}
+
+\maketitle
+
+\section{Task2}
+
+\subsection{Task C}
+\subsection{Task A)}
+By examining the realization of the process, the time series appears to oscillate consistently around a constant mean. The graph confirms this behavior, showing fluctuations around the expected value of 40, with no indication of a deterministic trend or changes in variance over time.
+Given this observation, the time series exhibits a drift component, and the second case of the Dickey-Fuller test (with a constant drift) is the most appropriate.
+$$y_t = c + \phi * y_{t-1} + \epsilon_t$$
+where :\\
+$c$ : can be seen as the constant drift term\\
+$\phi y_{t-1}$ is the autoregressive component.\\
+$\epsilon_t$ is the innovation component.\\
+
+In our opinion \textbf{case one} can be rejected as the series does not oscillate around zero but around a non-zero mean, which here is the expected value $E[y_t]$=40
+and the constant c=2 includes a drift which, invalidates the first case. \\
+\textbf{Case four} can also be rejected, as the series does not exhibit a deterministic trend (e.g., a steady upward or downward slope).
+The ARMA(1,1) model lacks a trend component $\beta$, making the fourth case unnecessary
+
+\section{Task3}
+
+\subsection{Task 3b}
+For case 1 we get an likelihood value of -1259.2685. 
+\begin{itemize}
+    \item These parameters are closer to the data-generating process (Task 2.1), which had similar values.
+    \item The relatively higher log likelihood (less negative) indicates a better fit to the observed data.
+    \item The v=4 account for potential heavy tails in the data.
+\end{itemize}
+For case 2 we get a log-likelihood value of -5562.2279. These values deviate significantly from the data generating process.
+\begin{itemize}
+    \item c = 1.5 is lower than the original, shifting the mean of the process.
+    \item $\phi$ = 0.75 suggests less persistence compared to
+    \item$\theta$ = 0.5 introduces more weight to the moving average component.
+    \item v = 6 reduces the heavy-tailed nature of the innovations, making the model less flexible for capturing outliers.
+    \item The much lower log likelihood (more negative) indicates a poor fit to the observed data.
+\end{itemize}
+\textbf{Overall}: A higher (less negative) log likelihood value indicates better fit. Case a) aligns more closely with the underlying process and thus fits the data better than case b).
+The large difference in logarithmic likelihoods (1259.2685 vs. 5562.2279) confirms that case a) is significantly better at capturing the underlying structure of the time series.
+\end{document}
