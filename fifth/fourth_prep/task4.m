@@ -99,3 +99,44 @@ if p_value < 0.05
 else
     disp('Result: Fail to reject H0. The parameter φ is not significantly different from 0.8 at the 5% level.');
 end
+
+%% Task 4.6
+% Parameters
+c = 2;              % Constant term
+phi = 0.95;         % AR parameter
+theta = 0.25;       % MA parameter
+nu = 4;             % Degrees of freedom for t-distribution
+T = 50000;            % Total length of the series
+y0 = 40;            % Starting value (expected value of the process)
+burn_in = 50;       % Burn-in phase length
+
+expected_value = c/(1-phi);
+disp(expected_value)
+
+% Simulate the ARMA(1,1) process
+yt_full = simulate_ARMA_t(T, c, phi, theta, nu, y0);
+
+yt = yt_full((burn_in+1):end);
+
+% Starting values for parameters
+x0 = [1.5; 0.75; 0.5; 5]; % [c0, φ0, θ0, ν0]
+
+% Optimization settings
+options = optimset('Display', 'iter', 'TolX', 1e-40, 'TolFun', 1e-40, ...
+                   'MaxIter', 1e10, 'MaxFunEvals', 100000);
+
+% Call the CML function with Hessian-based covariance matrix
+[x, f, g, cov, retcode] = CML(@arma_log_likelihood, @arma_conditional_log_likelihood, yt, x0, 1, 1, options);
+
+% Display results
+disp('Estimated Parameters:');
+disp(['c (constant): ', num2str(x(1))]);
+disp(['φ (AR parameter): ', num2str(x(2))]);
+disp(['θ (MA parameter): ', num2str(x(3))]);
+disp(['ν (degrees of freedom): ', num2str(x(4))]);
+
+disp('Covariance Matrix:');
+disp(cov);
+
+disp('Log Likelihood Value at Optimum:');
+disp(-f);
