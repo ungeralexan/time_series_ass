@@ -25,7 +25,7 @@ rng(42);
 series = ARMA_simulator(T, c, phi, theta, nu, y0);
 
 % Remove the first 50 observations of our series (burn in phase9
-yt = series((burn_in+1):end);
+y = series((burn_in+1):end);
 % we should end up with 750 observations
 
 
@@ -35,7 +35,7 @@ figure;
 hold on;
 
 % Plot the time series (with a color)
-plot(1:(T-burn_in), yt, 'LineWidth', 1.5, 'Color', [0 0.4470 0.7410]);
+plot(1:(T-burn_in), y, 'LineWidth', 1.5, 'Color', [0 0.4470 0.7410]);
 
 % Plot the expected value as a horizontal line (therefore we calculated it)
 yline(expected_value, '--r', 'LineWidth', 1.5, 'Label', 'Expected Value', ...
@@ -49,7 +49,7 @@ grid on;
 
 % Customize axes
 xlim([1 T-burn_in]);
-ylim([min(yt)-5, max(yt)+5]);
+ylim([min(y)-5, max(y)+5]);
 set(gca, 'FontSize', 12, 'Box', 'on');
 
 % Add legend
