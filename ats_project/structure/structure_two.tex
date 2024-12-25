@@ -1,0 +1,92 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+\title{Maximum Likelihood and Quasi-Maximum Likelihood Estimation for ARMA(1,1) Models}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section*{Abstract}
+This paper investigates the performance of Maximum Likelihood (ML) and Quasi-Maximum Likelihood (QML) estimation for ARMA(1,1) processes with \(t\)-distributed innovations. Simulated ensembles of time series are used to compare the estimators' accuracy, efficiency, and robustness. Results include kernel density analysis, confidence interval coverage, and performance metrics across 2,500 ensembles.
+
+\section{Introduction}
+Time series models are fundamental tools for analyzing temporal data. ARMA(1,1) models, in particular, balance complexity and interpretability by modeling autocorrelation and moving-average effects. Estimating their parameters via ML and QML is crucial, especially under varying innovation assumptions. This paper aims to:
+\begin{itemize}
+    \item Simulate ARMA(1,1) processes with \(t\)-distributed innovations.
+    \item The importance of stationarity and using the dicky fuller test
+    \item Compare ML and QML estimators using simulated ensembles.
+    \item Analyze estimator performance through confidence intervals and kernel densities.
+\end{itemize}
+
+\section{Methodology}
+\subsection{Simulating ARMA(1,1) Processes}
+The ARMA(1,1) process is defined as:
+\[
+y_t = c + \phi y_{t-1} + \epsilon_t + \theta \epsilon_{t-1}, \quad \epsilon_t \sim t(\nu),
+\]
+where \(c\) is the constant term, \(\phi\) is the autoregressive parameter, \(\theta\) is the moving average parameter, and \(\nu\) controls the tail behavior of the innovations. Simulations discard a burn-in phase of 50 observations to mitigate initialization bias.
+\subsection{The importance of stationarity}
+\begin{enumerate}
+    \item \textbf{The visual analysis}: Briefly mention the graph and make a case for why a dicky fuller test would be necessary. 
+    \item Explain which case of the dicky fuller test you opt for and why. \textbf{Important claim power}: Meaning make a statement why you chose this special case of the dicky fuller test and give the alternative hypothesis enough chance. 
+    \item As part of the dicky fuller test estimate the model and there claim why the values might not be perfect as we omit the $\theta$ part.
+    \item Then compute the standard erros and perform the dicky fuller test to check if this process is stationary before proceeding in estimating the paramters
+\end{enumerate}
+
+
+\subsection{Parameter Estimation: ML and QML}
+\textbf{Maximum Likelihood (ML):} Assumes \(t\)-distributed innovations, leveraging the likelihood:
+\[
+\ln L = \sum_{t=2}^T \left[ \ln \Gamma\left(\frac{\nu+1}{2}\right) - \ln \sqrt{\nu\pi} - \ln \Gamma\left(\frac{\nu}{2}\right) - \frac{\nu+1}{2} \ln\left(1 + \frac{\epsilon_t^2}{\nu}\right) \right].
+\]
+
+\textbf{Quasi-Maximum Likelihood (QML):} Assumes Gaussian innovations:
+\[
+\ln L = \sum_{t=2}^T \left[-\frac{1}{2}\ln(2\pi\sigma^2) - \frac{\epsilon_t^2}{2\sigma^2}\right].
+\]
+
+The `CML` toolbox is employed to estimate parameters iteratively for both methods.
+
+\subsection{Ensemble Simulations}
+2,500 ARMA(1,1) realizations of length \(T = 800\) are generated using true parameters \((c, \phi, \theta, \nu) = (2, 0.95, 0.25, 4)\). For each realization:
+\begin{itemize}
+    \item ML and QML estimations are performed.
+    \item Estimates, covariance matrices, and standard errors are stored.
+\end{itemize}
+
+\section{Results and Analysis}
+\subsection{Parameter Estimates and Variability}
+\textbf{Single Realization:} ML and QML estimates differ slightly, reflecting their respective innovation assumptions.
+
+\textbf{Ensemble Summary:} Across 2,500 simulations, ML estimators are closer to the true parameters, while QML estimators show higher variance due to misspecified innovations.
+
+\subsection{Confidence Intervals and Coverage}
+95\% confidence intervals are constructed for ML estimates:
+\[
+\text{CI} = \hat{\theta}_i \pm 1.96 \cdot \text{SE}(\hat{\theta}_i).
+\]
+Empirical coverage rates indicate that true values are contained approximately 95\% of the time, validating the reliability of ML estimators.
+
+\subsection{Kernel Density Analysis}
+Kernel density estimates (KDEs) reveal:
+\begin{itemize}
+    \item ML estimates exhibit narrower distributions around the true parameters.
+    \item QML estimates are wider and occasionally biased due to Gaussian assumptions on \(t\)-distributed data.
+\end{itemize}
+
+\section{Conclusion}
+This study highlights the comparative strengths and weaknesses of ML and QML estimators for ARMA(1,1) processes:
+\begin{itemize}
+    \item ML estimation provides more accurate and efficient estimates under correct innovation assumptions.
+    \item QML is robust to misspecified distributions but at the cost of increased variability.
+\end{itemize}
+Future work could explore alternative QML methods or extend the analysis to other ARMA models.
+
+\end{document}
