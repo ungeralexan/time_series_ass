@@ -1,0 +1,23 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+
+
+\begin{document}
+\section{Introduction}
+Time series data are prevalent across various fields, including finance, economics, meteorology, and engineering. Analyzing such data is crucial for tasks like forecasting, anomaly detection, and uncovering underlying patterns. Among the tools available for time series analysis, Autoregressive Moving Average (ARMA) models are widely used due to their simplicity and effectiveness in capturing linear dependencies in stationary data.
+The success of ARMA modeling depends on accurate parameter estimation, as the parameters directly influence the model's ability to represent the temporal structure of the data. 
+For the estimation purposes of the parameters of the ARMA the maximum likelihood method provides a rigorous framework to derive parameter estimates by maximizing the likelihood of the observed data given the model.
+The Maximum Likelihood estimation method yields asymptotically efficient and unbiased estimates under suitable conditions, making it a gold standard in statistical inference. However, since MLE requires detailed knowledge about the distribution of the process parameters, Quasi-Maximum Likelihood Estimation (QMLE) can be employed as an alternative method for estimating the model's parameters.
+Given the challenges associated with parameter estimation in ARMA models, this short paper explores and compares these two estimation techniques.
+ The analysis begins by simulating a realization generated from an ARMA(1,1) process. Before applying the estimation techniques, the stationarity of the process will be verified using the Dickey-Fuller test.
+Once stationarity is confirmed, the MLE method will be used to calculate the likelihood of the sample for various parameter specifications. 
+Subsequently, parameter estimation will be conducted using both Maximum Likelihood Estimation and Quasi Maximum Likelihood Estimation. 
+To assess and compare the performance of these methods, parameter estimation will be repeated for 2,500 realizations of the process. The results will provide insight into the advantages and limitations of each technique in estimating ARMA model parameters.
+
+
+\end{document}
