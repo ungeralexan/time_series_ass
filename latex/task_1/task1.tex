@@ -1,0 +1,48 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{hyperref}
+
+
+
+\begin{document}
+\section{The Data Generating Process}
+For the purpose of our analysis we will first introduce the ARMA(1,1) process which will be assumed to have created the time series data.
+As the process is described as an ARMA(1,1) it will enventually entail an autoregressive part and an moving average part.
+The whole data generating process can be describe mathematically in the following way:
+\begin{equation}
+    y_t = c + \phi y_{t-1} + \theta \epsilon_{t-1} + \epsilon_t
+\end{equation}
+It is important to mention that the innovations in our process will be t distributed meaning $\epsilon_t \sim t(\nu) $. Moreover our process will have the following true paramter values:
+\begin{equation}
+    y_t = 2 + 0.95y_{t-1} + 0.25\epsilon_{t-1} + \epsilon_t
+\end{equation}
+For our purpose we will be defining $\nu$ as having 4 degrees of freedom. 
+As the properties of the Moving average part do not matter with regard to important stationarity assumption (cite hamilton) and the value of $\phi$ in absolute terms is smaller then one we can assume stationarity. 
+Using the lag operator our process could be also be defined as 
+\begin{equation}
+    (1-\phi_1 L)Y_t = c_t + (1 + \theta_1L)\epsilon_t
+\end{equation}
+which agains yields the MA infinity description of 
+\begin{equation}
+    \mu + \Phi(L)\epsilon_t
+\end{equation}
+As our process is stationary ($\phi<1$), we have the absolute summability of our coefficients also in the MA($\infty$) representations.
+The mean of of the process which also depends on the Autoregressive paramter can be represented as
+\begin{equation}
+\frac{c}{1-\phi} = \frac{2}{1-0.95} = 40
+\end{equation}
+We therefore have an expected value of 40 for our paramter specification.
+
+\section{Realization of the process}
+In the following we will now inspect the created realization of the stationary process and then select a case of the Dicky Fuller test to assess stationarity. 
+For the follwoing graph which is represented in, it is important to mention that we simulated 800 observations but for the sake dependencies in the first 50 observations we discareded the first 50 observations as a burn in phase. For simulation purposes we selected the starting value for the process to the same value of the expecter value (40)
+By taking a look at the graph it is clear to see how the realization fluctuates around the expected value of 40 (red line) and therefore remains close to the theoretical mean, which could reflect the stationarity of the process. Moreover the realization for the number of 800 observations does not display a long term upward or downward moving trend or a certain drift. 
+We moreover could conclude that the entails a certain persistence which is seen in the smoother and less eratic transitions between the successive values. We additionally observe how the moving average coefficient contributes to short term corrections, which introduce additional randomness to the series but are less dominant compared to the AR component. Since furthermore, the innovations follow a t-distribution rather than a Gaussian distribution, the process exhibit occasional abrupt changes or outliers due to the heavier tails of the t-distribution. These are especially visible around the 400 and 500 region. 
+
+
+
+
+\end{document}
