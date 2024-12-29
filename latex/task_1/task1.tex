@@ -9,40 +9,115 @@
 
 \begin{document}
 \section{The Data Generating Process}
-For the purpose of our analysis we will first introduce the ARMA(1,1) process which will be assumed to have created the time series data.
-As the process is described as an ARMA(1,1) it will enventually entail an autoregressive part and an moving average part.
-The whole data generating process can be describe mathematically in the following way:
+For the purpose of our analysis we will first introduce our true ARMA(1,1) process which will be assumed to have created the time series data.
+This ARMA(1,1) it will entail exactly one autoregressive part and one moving average part. Whereas the autoregressive part will be later of great importance to determine if the process is stationary.
+The data generating process will be described in the following way.
 \begin{equation}
     y_t = c + \phi y_{t-1} + \theta \epsilon_{t-1} + \epsilon_t
 \end{equation}
-It is important to mention that the innovations in our process will be t distributed meaning $\epsilon_t \sim t(\nu) $. Moreover our process will have the following true paramter values:
+It is important to mention that the innovations in our process will be t distributed $\epsilon_t \sim t(\nu) $. Moreover, our process will be defined as having the following true parameters:
 \begin{equation}
     y_t = 2 + 0.95y_{t-1} + 0.25\epsilon_{t-1} + \epsilon_t
 \end{equation}
-For our purpose we will be defining $\nu$ as having 4 degrees of freedom. 
-As the properties of the Moving average part do not matter with regard to important stationarity assumption (cite hamilton) and the value of $\phi$ in absolute terms is smaller then one we can assume stationarity. 
-Using the lag operator our process could be also be defined as 
-\begin{equation}
-    (1-\phi_1 L)Y_t = c_t + (1 + \theta_1L)\epsilon_t
-\end{equation}
-which agains yields the MA infinity description of 
+The innovation terms will follow the t distribution and we will define $\nu$ =4, meaning four degrees of freedom. Hence, the innovation distribution has heavier tails than a Gaussian distribution.
+As mentioned in Hamilton to now assess whether our process is stationary we will check whether the autoregressive coefficient ($\phi$) is smaller then one in absolute terms.
+For our case we can clearly conclude that $|0.95| <= 1$. 
+Therefore, our true process is stationary. We could also assess invertibility but we will neglect this for the time being.
+As our process is stationary ($\phi<1$) the coefficients our coefficients are absolutely summable and can define the process in a MA infinity representation which would yield after Hamilton:
 \begin{equation}
     \mu + \Phi(L)\epsilon_t
 \end{equation}
-As our process is stationary ($\phi<1$), we have the absolute summability of our coefficients also in the MA($\infty$) representations.
-The mean of of the process which also depends on the Autoregressive paramter can be represented as
+The mean now can be calculated after Hamilton
 \begin{equation}
 \frac{c}{1-\phi} = \frac{2}{1-0.95} = 40
 \end{equation}
-We therefore have an expected value of 40 for our paramter specification.
+Our expected value is 40 and can be easily calculated as it only depends on the autoregressive parameter, whose value is already known to us.
 
 \section{Realization of the process}
-In the following we will now inspect the created realization of the stationary process and then select a case of the Dicky Fuller test to assess stationarity. 
-For the follwoing graph which is represented in, it is important to mention that we simulated 800 observations but for the sake dependencies in the first 50 observations we discareded the first 50 observations as a burn in phase. For simulation purposes we selected the starting value for the process to the same value of the expecter value (40)
-By taking a look at the graph it is clear to see how the realization fluctuates around the expected value of 40 (red line) and therefore remains close to the theoretical mean, which could reflect the stationarity of the process. Moreover the realization for the number of 800 observations does not display a long term upward or downward moving trend or a certain drift. 
-We moreover could conclude that the entails a certain persistence which is seen in the smoother and less eratic transitions between the successive values. We additionally observe how the moving average coefficient contributes to short term corrections, which introduce additional randomness to the series but are less dominant compared to the AR component. Since furthermore, the innovations follow a t-distribution rather than a Gaussian distribution, the process exhibit occasional abrupt changes or outliers due to the heavier tails of the t-distribution. These are especially visible around the 400 and 500 region. 
+Using the data generating process we have defined in (2) we will now create one realization of the process.
+This realization of the process was plotted and can be seen in picture(1).
+It is important to mention that for the following graph we simulated 800 observations but due to dependencies in the first 50 observations we decided to discard the first 50 observations as burn in phase.
+Moreover, we selected the starting values for our simulation of the realization of the process wich is the same as the expected value of the process, displayed in (4).
+A first glance of the graph shows how the data fluctuates around the expected value of 40 which is represented through the dashed red line and subsequently remains close to the theorietical mean which represents a stationary behaviour. 
+Furthermore, the data does not display any clear upward or downward moving trend; the process just randomly oscillates around the mean. Additionally, a slight persistance in the data can be seen, as the data entails smoother and less eratic transitions between the successive values. Around the 400 and 500 values region the data eshibts abrupt changes and outliers which can be due to the heavier tails of the t distribution that we defined for the process. Finally the moving average coefficient contributes to short term corrections, which introduce additional randomness to the series but are less dominant compared to the autoregressive component.
+In the next sections we will work with the realization of the process asuming that we dont know anything about the data generating process and therefore try to estimate the true process
+
+\section{Dicky Fuller test statistic}
+In real world applications researchers mostly face the problem of not knowing about the true data generating process, meaning about which process actaully generated the time series they are looking at and therefore have trouble to say whether certain moments of the series can be extrapolated for the true population moments. 
+In this paper we will from now one assuming that we dont know the true process that generated the data and therefore, we will try to conclude from this time series whether the simulated realization is stationary, meaning that the moments of the series are constant over time. Stationarity in this purpose is crucial, as only with stationarity we can also assess whether we encounter erdogicty. 
+We want to have erdogicty as in this case a law of large numbers applies and the time series averages will converge either in probability or almost surely towards their expectation counterparts. 
+In order to asess whether our data is stationariyt we will use the Dicky Fuller test, which 
+To assess stationarity we will now be using the dicky fuller test, which explicitly based on different cases tests whether the process has an unit root or not.
+\subsection{Selecting the case}
+In order to perform a Dicky Fuller test we will have to decide for a case in order to estimate the model.
+It is important to choose as a case which will later yield the alternative hypothesis enough power to reject a false nullhypothesis meaning a rejecting when the process does not have an unit root.
+By inspecting the plot we see as mentioned above how the data randomly fluctuates over a nonzero mean which in this case is the value of 40. Therefore we will choose the second case of the dicky fuller test. We will neglect the first case as we there would expect the data to fluctuate around a zero mean which is not the case in our plot and therefore we would provide our stationary alternative with not enough power to reject a false nullhypothesis as the stationary true could seldom produce a fluctuating realization around a nonzero null. Furthermore, we also discared case three and case four. Case 3 will be discarded as we first do not observe a certain druft in the data and moreover, this case yields way to less power to the stationary alternative. Moreover, the fourth case will also be discareded as we mentioned above there is clearly no upward or downward moving trend in the data observable and therefore no reason to decide on the fourth case of the dicky fuller test.
+Based on this argumentation the second case of the Dicky Fuller test perfectly aligns with the observations that are depicted in the plot.
+\subsection{Estimate the model for the test}
+For the second case of the Dicky Fuller test as for Hamilton we would expect the true model under the Nullhypothesis as 
+\begin{equation}
+    y_t = y_{t-1} + ut
+\end{equation}
+therefore our parameter $\rho$, which is the parameter of interest would equal the value one. On the other hand the model defining the stationary alternative hypothesis would look the following way
+\begin{equation}
+    y_t = \alpha + \rho y_{t-1} + ut
+\end{equation}
+Whereas the $\alpha$ must be bigger then zero and our $\rho <= 1$ in absolute terms. 
+Again it can be perfectly seen how this case yields enough power to the alternative hypothesis as the model in the alternative could have created a nonzero mean reverting process as long as the paramters would be defined as above.
+For the purpose of conducting such as Dicky Fuller test for the second case we will now estimate our paramters $\hat{\alpha}, \hat{\rho}$ using the model define in equation (6).
+\\
+After estimating the paramter values using the Ordinary Least Squares approach we obatin $\hat{\rho} = 0.96$ and for $\hat{\alpha}$ = 1.46. The corresponding standard errors are 0.01 for $s.e.(\hat{\rho})$ and 0.4 for $s.e.(\hat{\alpha})$. If we would compare the  paramter estimates with our true parameter values in the second equation, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. On the other hand the value for the constant $\alpha$ differs more noticeably from the true intercept.
+This discrepancy is also reflected in the standard errors: the small standard error of $\hat{\rho}$ suggests that the data are very informative about the persistence of the process. By contrast, the higher standard error of $\hat{\alpha}$ arises because, in a near-unit-root setting of $\rho$, even small changes in $\rho$ can can greatly affect the implied mean of the process.Consequently, the intercept estimate is more vulnerable to finite-sample fluctuations and to the influence of the heavy-tailed errors.
+Hence, we observe a higher standard error for $\hat{\alpha}$ then for $\hat{\rho}$.
+
+\subsection{Test statistic}
+We will now  test for an unit root in $y_t$ using the second case of the Dicky Fuller test. 
+We therefore define our Nullhypothesis as 
+$$H0 : \rho = 1 \, \text{(unit root)}$$
+and the alternative hypothesis as 
+$$H1: \rho \neq 1 \, \text{(stationary alternative)}$$
+To test whether the process entails an unit root I will define the complete test statistic as the following
+$$t-stat: \frac{0.96-1}{0.01}$$
+It is important to mention that the Test statistic under the Null is not normally distributed as we are now in the case where we asumme an unit root. Nevertheless, we know that the distribution of the test statistic under the null is nonstandard but as well nuisance parameter free. For our critical values we now cannot use the conventional 1.96 from the normal distribution. Instead we will compare it  against the critical values of the from the Dicky Fuller table.
+ For over 500 observations, a zero trend case, and a 5\% significance level, the critical value is approximately -2.86.
+The resulting value of our test statistic is -3.66 and therfore is less then -2.86, and therefore we do not fail to reject the nullhypothesis of an unit root for the significance level of 5 percent.
+Having established that our process does not contain a unit root, we next estimate its parameters via Maximum Likelihood (ML).  Specifically, we will propose two distinct parameter specifications and compare their respective log-likelihood values to determine which specification provides a better fit.This approach is especially useful given the heavy-tailed error distribution, as MLE enables us to incorporate the exact distributional assumptions and, in turn, obtain more reliable parameter estimates than basic OLS in such settings.
+\section{Extra}
+We could also be verifying stationarity by looking at the characteristic polyonomial in which case the roots z must be bigger then one in absolute terms. We can find z by $\frac{1}{0.95}$ which would yield 1.0526 which is bigger then one, therefore our process would be stationary.
 
 
 
+\section{Tablex}
+\begin{table}[ht]
+    \centering
+    \caption{OLS Parameter Estimates vs.\ True Values}
+    \label{tab:ols-results}
+    \begin{tabular}{lccc}
+        \hline
+        \textbf{Parameter} & \textbf{Estimate} & \textbf{Std.\ Error} & \textbf{True Value} \\
+        \hline
+        $\alpha$ & 1.46 & 0.40 & 2.00 \\
+        $\rho$   & 0.96 & 0.01 & 0.95 \\
+        \hline
+    \end{tabular}
+\end{table}
+
+\begin{table}[ht!]
+\centering
+\caption{Dickey-Fuller (DF) Test for Unit Root}
+\label{tab:DF-test}
+
+\begin{tabular}{l l}
+\toprule
+\textbf{Null Hypothesis:}   & $H_0: \rho = 1 \quad (\text{unit root})$ \\
+\textbf{Alternative:}       & $H_1: \rho \neq 1 \quad (\text{stationary})$ \\
+\midrule
+\textbf{Estimate}           & $\hat{\rho} = 0.96 \quad;\quad \mathrm{se}(\hat{\rho}) = 0.01$ \\
+\textbf{Test Statistic}     & $t_{\mathrm{DF}} = \frac{0.96 - 1}{0.01} = -3.66$ \\
+\textbf{5\% Critical Value} & $-2.86$ \\
+\textbf{Decision (5\%)}     & $-3.66 < -2.86 \;\rightarrow\; \text{Reject } H_0$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
