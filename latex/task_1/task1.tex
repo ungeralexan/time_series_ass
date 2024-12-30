@@ -81,7 +81,91 @@ $$t-stat: \frac{0.96-1}{0.01}$$
 It is important to mention that the Test statistic under the Null is not normally distributed as we are now in the case where we asumme an unit root. Nevertheless, we know that the distribution of the test statistic under the null is nonstandard but as well nuisance parameter free. For our critical values we now cannot use the conventional 1.96 from the normal distribution. Instead we will compare it  against the critical values of the from the Dicky Fuller table.
  For over 500 observations, a zero trend case, and a 5\% significance level, the critical value is approximately -2.86.
 The resulting value of our test statistic is -3.66 and therfore is less then -2.86, and therefore we do not fail to reject the nullhypothesis of an unit root for the significance level of 5 percent.
-Having established that our process does not contain a unit root, we next estimate its parameters via Maximum Likelihood (ML).  Specifically, we will propose two distinct parameter specifications and compare their respective log-likelihood values to determine which specification provides a better fit.This approach is especially useful given the heavy-tailed error distribution, as MLE enables us to incorporate the exact distributional assumptions and, in turn, obtain more reliable parameter estimates than basic OLS in such settings.
+Having established that our process does not contain a unit root, we next estimate its parameters via Maximum Likelihood (ML). 
+
+
+
+\section{Conditional Maximum Likelihood estimation}
+We now use Conditional Maximum Likelihood in order to estimate the true paramters that created the series. 
+Unlike exact Maximum Likelihood, CMLE assumes the first observation, $y_1$, is deterministic and maximizes the likelihood conditioned on this initial value see Hamilton p(122).
+This approach is computationally efficient, as noted by Hamilton (p. 123), and under the assumption of a large sample size, the first observation makes a negligible contribution to the total likelihood. 
+Given the stationarity condition $\phi < 1$ (proven in the previous section), the Maximum Likelihood Estimators (MLE) and Conditional Maximum Likelihood Estimators (CMLE) share the same large-sample distribution.
+For the purpose of conditional maximum likelihood we again as in the prior section assume that the we dont know the true paramters that created the time series.
+
+By maximizing the conditional log-likelihood function with respect to the parameters, we aim to identify the values most likely to have generated the observed data. Additionally, we assume that the process innovations follow a $t$-distribution:
+ \begin{equation}
+     \epsilon_t \sim t(\nu) 
+ \end{equation}
+ where $\nu$ denotes the degrees of freedom.
+The choice of a $t$-distribution is particularly advantageous due to its ability to model heavy-tailed errors, which are often encountered in real-world data. Unlike Ordinary Least Squares (OLS), which assumes normally distributed errors and minimizes the sum of squared residuals, the correctly defined CMLE accounts for the specific distributional properties of the innovations.
+In order two get the maximum likelihood estimates this paper will follow two steps. First we will propose two distinct parameter specifications and compare their respective log-likelihood values. This comparison allows us to determine which specification offers a better fit to the data, thereby providing insights into the underlying dynamics of the process.
+Later in the next section we will try to estimate the paramters by numerical search which in this context will be minimizing the log likelihood.
+ \subsection{Estimate the Likelihood}
+In order to implement our first approach, we compute the conditional log-likelihood contributions for each time step. 
+The innovations, $\epsilon_t$, are calculated recursively based on the ARMA(1,1) model:
+\begin{equation}
+    \epsilon_t = y_t - c -\phi y_{t-1} - \theta \epsilon_{t-1}
+\end{equation}
+In order to stabilize the maximization of the likelihood by taking the sum of densities instead of the multiplication of densities by taking the logartihm.
+The conditional log likelihood contributions are then given by
+ \begin{equation}
+      l_{t} =  (ln \Gamma(\frac{\nu +1}{2})- ln(\sqrt{\nu \pi} * \Gamma(\frac{\nu}{2})) - \frac{\nu+1}{2}ln(1+\frac{\epsilon_t^{2}}{\nu}))
+ \end{equation}
+The total conditional log likelihood is then obtained by summing these contributions over all time steps .
+\begin{equation}
+    L_{total} = \sum_{t=2}^{T} l_t
+\end{equation}
+We compute the conditional log-likelihood for two parameter specifications:
+\begin{itemize}
+    \item \textbf{Case (a):} $c = 2, \phi = 0.95, \theta = 0.25, \nu = 4$ (the true parameters used to generate the data),
+    \item \textbf{Case (b):} $c = 1.5, \phi = 0.75, \theta = 0.5, \nu = 6$ (an alternative set of parameters).
+\end{itemize}
+The computed condtional log-likelihood values for each case are summarized in Table~\ref{tab:results}.
+As shown in Table~\ref{tab:results}, the conditional log-likelihood value for Case (a) (the true parameter specification) is significantly higher (less negative) than that for Case (b). This indicates that the true parameters provide a better fit to the observed series compared to the alternative specification.
+In the context of log-likelihood, "less negative" values are critical because the log-likelihood is derived from the natural logarithm of the joint probability density of the data given the parameters. Higher (or less negative) log-likelihood values correspond to a greater probability density for the observed data, indicating that the specified parameters are more likely to have generated the series.
+Therefore, the lower (more negative) log-likelihood value for Case (b) reflects a poorer fit to the data.
+The deviations in the AR and MA coefficients, as well as the degree of freedom parameter $\nu$, result in a suboptimal representation of the data-generating process. 
+This discrepancy highlights the sensitivity of CMLE to parameter specification. By explicitly accounting for the heavy-tailed $t$-distributed innovations, CMLE effectively distinguishes between parameter sets and favors those that align closely with the true data-generating process.
+\subsection{Estimate the paramters with numerical minimization}
+In this section we will now try to estimate the parameters $c, \phi, \theta,\nu$ by maximizing the conditional log-likelihood function. To achieve this, we adopt a numerical optimization approach.
+It is worth noting that instead of directly maximizing the log-likelihood, we minimize the negative log-likelihood. These two approaches are mathematically equivalent, as minimizing the negative of a function is the same as maximizing the original function. This equivalence stems from the monotonic nature of the negative operation, which preserves the order of the optimization objective.
+To adapt our method, we refine the log-likelihood function introduced earlier (Equation 10) to return its negative value. This ensures compatibility with standard numerical optimization algorithms, which are designed to find the minimum of an objective function. In order to minimze the negative of the function we used the 'fminsearch' algorithm from matlab which is also known as derivate free optimization. 
+We moreover, specified a Hessian-based covariance matrix to quantify parameter uncertainty and initialized the estimation procedure with the following values c = 1.5, $\phi$ = 0.75, $\theta$ = 0.5, $\nu$ = 5.
+The results of the numerical optimiuation can be found in Table~\ref{tab:results2}.
+The results of the numerical optimization, presented in Table~\ref{tab:results2}, indicate that the Conditional Maximum Likelihood Estimation (CMLE) approach successfully estimated the parameters of the ARMA(1,1) process. The estimated values for \(c\), \(\phi\), \(\theta\), and \(\nu\) are close to their true values, demonstrating the robustness and accuracy of the method.
+
+Specifically:
+\begin{itemize}
+    \item The estimated constant term, \(\hat{c} = 2.2456\), closely approximates the true value of \(c = 2\).
+    \item The autoregressive coefficient, \(\hat{\phi} = 0.9446\), is near the true value of \(\phi = 0.95\), indicating accurate capture of the process's dependency structure.
+    \item The moving average coefficient, \(\hat{\theta} = 0.2834\), is similarly aligned with the true value of \(\theta = 0.25\).
+    \item The degrees of freedom for the \(t\)-distributed innovations, \(\hat{\nu} = 3.4515\), suggests that the estimation effectively captures the heavy-tailed nature of the errors, with only minor deviations from the true \(\nu = 4\).
+\end{itemize}
+
+The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. The minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates, while the small gradient magnitude at the optimum (\(\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}\)) and a successful optimization exit flag further validate the convergence of the procedure. It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
+In conclusion, the CMLE approach, coupled with numerical optimization, provides a reliable and efficient framework for parameter estimation in ARMA(1,1) processes. The results demonstrate the practical utility of this methodology in accurately recovering the underlying parameters of a data-generating process.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 \section{Extra}
 We could also be verifying stationarity by looking at the characteristic polyonomial in which case the roots z must be bigger then one in absolute terms. We can find z by $\frac{1}{0.95}$ which would yield 1.0526 which is bigger then one, therefore our process would be stationary.
 
@@ -119,5 +203,39 @@ We could also be verifying stationarity by looking at the characteristic polyono
 \bottomrule
 \end{tabular}
 \end{table}
+
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{@{}lcccccc@{}}
+\toprule
+Case & $c$ & $\phi$ & $\theta$ & $\nu$ & Total Log-Likelihood \\ \midrule
+(a)  & 2   & 0.95   & 0.25     & 4     & -1388.32             \\
+(b)  & 1.5 & 0.75   & 0.5      & 6     & -5871.19             \\ \bottomrule
+\end{tabular}
+\caption{Log-likelihood values for the two parameter specifications.}
+\label{tab:results} % Label for the table
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\caption{Estimated Parameters and Results of the CMLE Procedure for ARMA(1,1)}
+\label{tab:results2}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{True Value} & \textbf{Estimated Value} & \textbf{Standard Error} & \textbf{Covariance Matrix Element} \\ \midrule
+$c$      & 2.00     & 2.2456   & 0.404      & 0.1632  \\
+$\phi$   & 0.95     & 0.9446   & 0.010      & 0.0001  \\
+$\theta$ & 0.25     & 0.2834   & 0.030      & 0.0009  \\
+$\nu$    & 4.00     & 3.4515   & 0.347      & 0.1205  \\ \midrule
+\textbf{Metric} & \multicolumn{4}{c}{} \\ \midrule
+Negative Log-Likelihood & \multicolumn{4}{c}{1386.5} \\
+Gradient Magnitude      & \multicolumn{4}{c}{$\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}$} \\
+Optimization Exit Flag  & \multicolumn{4}{c}{1 (Successful Convergence)} \\ \bottomrule
+\end{tabular}
+\end{table}
+
 
 \end{document}
