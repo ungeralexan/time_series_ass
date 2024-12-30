@@ -145,19 +145,72 @@ Specifically:
 The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. The minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates, while the small gradient magnitude at the optimum (\(\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}\)) and a successful optimization exit flag further validate the convergence of the procedure. It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
 In conclusion, the CMLE approach, coupled with numerical optimization, provides a reliable and efficient framework for parameter estimation in ARMA(1,1) processes. The results demonstrate the practical utility of this methodology in accurately recovering the underlying parameters of a data-generating process.
 
+\subsection{Confidence intervalls}
+After estimating the paramters of the ARMA(1,1) process using numerical optimization we now want to assess the precission of the estimates by calculating the standard errors and constructing 95\% confidence intervals.
+Confidence intervals are essential for determining the range within which the true parameter values are likely to lie, given the data and model assumptions.The 95\% confidence intervals are constructed based on the standard errors derived from the Hessian-based covariance matrix. These intervals provide a statistical test for the null hypothesis that the true parameter values are equal to specific estimates. 
+For values within the confidence interval, we fail to reject the null hypothesis at the 5\% significance level, suggesting that these values are consistent with the observed data. This will help us to evaluate the reliability and uncertainty of the paramter estimates.
+Due to the asymptotic normality assumption of the Maximum Likelihood estimates we will treat the paramters as normally distributes even though our innovations are t distributed, this is due to our large sample size. 
+The results for our confidence intervalls which are displayed in ~\ref{tab:ci_results} and indicate that first the estimate of \(c = 2.2312\) falls within the confidence interval \([1.4271, 3.0352]\), underscoring that we could not reject the nullhypothesis that our estimate is the true value at least for 5 percent signifcance. On the other hand the interval is relatively wide compared to the other parameters, indicating higher uncertainty in the estimate. The estimate of \(\phi = 0.9452\) is highly precise, with a narrow confidence interval \([0.9255, 0.9648]\). The confidnece intervall moreover, excludes one and therefore confirms the stationarity of the process. The estimate of \(\theta = 0.2837\) lies within the interval \([0.2231, 0.3443]\), demonstrating moderate precision, still we could not reject the nullhypothesis indicating that this value is the true paramter value.  The estimate of \(\nu = 3.4691\) suggests that the error distribution has heavy tails, as the interval \([2.7630, 4.1752]\) excludes values consistent with normality (\(\nu \to \infty\)).
+Overall, the results confirm the robustness of the parameter estimates, with the confidence intervals supporting their statistical significance and alignment with the underlying process characteristics. 
 
 
+\section{Hypothesis testing}
+With the parameter estimates and the confidence intervalls established, we now focus on hypothesis testing to assess specific claims about the paramters of our ARMA(1,1) model. 
+We therefore will consider the null hypothesis $H0: \phi =0.8$, testing whether the autoregressive coefficient is significantly different from this hypothesized value.  Using the t-test and a significance level of 5\%, we aim to evaluate whether the data provides sufficient evidence to reject this hypothesis.
+To test whether the autoregressive coefficient \(\phi\) is significantly different from 0.8, we perform a t-test using the following hypotheses:
+
+\[
+H_0: \phi = 0.8 \quad \text{(The null hypothesis)}
+\]
+\[
+H_1: \phi \neq 0.8 \quad \text{(The alternative hypothesis)}
+\]
+
+The test statistic for the t-test is calculated as:
+\[
+t = \frac{\hat{\phi} - \phi_0}{\text{SE}(\hat{\phi})},
+\]
+where:
+\begin{itemize}
+    \item \( \hat{\phi} \) is the estimated value of the parameter,
+    \item \( \phi_0 = 0.8 \) is the hypothesized value under \( H_0 \),
+    \item \( \text{SE}(\hat{\phi}) \) is the standard error of the estimated parameter.
+\end{itemize}
+
+Given that the standard error of \( \hat{\phi} \) is \( \text{SE}(\hat{\phi}) = 0.0100 \), and the estimated value is \( \hat{\phi} = 0.9452 \), the t-statistic becomes:
+\[
+t = \frac{0.9452 - 0.8}{0.0100} = \frac{0.1452}{0.0100} = 14.52.
+\]
+For a two-tailed t-test at the 5\% significance level (\(\alpha = 0.05\)), the critical value is:
+\[
+t_{\text{crit}} = \pm 1.96,
+\]
+assuming the sample size is large enough for the test statistic to follow a standard normal distribution.
+The calculated t-statistic is \( t = 14.52 \), which is much greater than the critical value of \( t_{\text{crit}} = 1.96 \). Therefore, we do not fail to reject the null hypothesis \( H_0: \phi = 0.8 \) at the 5\% significance level.
+This again underlines a stronger persistence in the time series than would be expected under the null hypothesis.
 
 
+\subsection{Two-Sided p-Value}
+We moreover, calculated the two-sided p-value, which quantifies the probability of observing a test statistic as extreme as \( t = 14.4996 \), assuming \( H_0 \) is true. The p-value is computed as:
+\[
+p = 2 \cdot (1 - \Phi(|t|)),
+\]
+where \( \Phi(|t|) \) is the cumulative distribution function (CDF) of the standard normal distribution. Substituting \( t = 14.4996 \), we find:
+\[
+p = 2 \cdot (1 - \Phi(14.4996)) \approx 0.000000.
+\]
+Since \( p < 0.05 \), we do not fail to reject the null hypothesis \( H_0 \) at the 5\% significance level. This result is consistent with the conclusion of the t-test, further reinforcing the finding that the estimated autoregressive coefficient \(\phi\) is significantly different from 0.8.
+The extremely low p-value (\( p \approx 0.000000 \)) indicates that the likelihood of observing such a large test statistic under the null hypothesis is essentially zero. This provides strong evidence against \( H_0 \), suggesting that the persistence in the time series, as captured by \(\phi\), is significantly greater than the hypothesized value of 0.8.
 
-
-
-
-
-
-
-
-
+\subsection{Sample size}
+To assess the impact of sample size on paramter estimation and hypothesis testing, we increase the number of observations for the ARMA(1,1) process from T=800 to T=50000. By repeating the estimation of the paramters with conditional maximum likelihood, computing the confidence intervalls and finally test the hypothesis, we evaluate how a significantly larger sample influences the precision of parameter estimates, the results of hypothesis tests, and the computation of the covariance matrix.
+The parameter estimates obtained with T=50,000 observations are presented in Table~\ref{tab:results_large_sample}.
+For this task we used the same starting values as for the first approach, and moreover we again minimized the negative of condtional log likelihood using a computational approach. 
+Table~\ref{tab:param_estimates_comparison} shows the comparison of the paramter estimates for different number of observations. We can clearly see how increasing the sample size improves both accuracy and precision of the paramter estimates, as evidenced by estimates closer to the true values for all four paramters. 
+Furtheremore, across all parameters, standard errors decrease dramatically with the increase in sample size, reflecting improved precision. For instance: For c the standard error decreases from 0.40 to 0.05. 
+We moreover can observe how the negative log likelihood increases from 386.5 (T=800) to 84,302 (T=50,000). This increase is expected due to the larger sample size, as the log-likelihood scales with the number of observations.
+Finally Table~\ref{tab:cov_matrix_comparison} shows how the covarinace matrix shrinks consistently, indicating a reduced uncertainty in the paramter estimates as T increases. 
+The increase in the number of observations from 800 to 50000 highlights the importance of the sample size, as it not only reduces the estimations the estimation errors but also provides reliable measures of uncertainty.
 
 
 
@@ -237,5 +290,84 @@ Optimization Exit Flag  & \multicolumn{4}{c}{1 (Successful Convergence)} \\ \bot
 \end{tabular}
 \end{table}
 
+
+
+\section{Parameter Estimates and Confidence Intervals}
+
+The parameter estimates, standard errors, and their 95\% confidence intervals are presented in Table~\ref{tab:ci_results}. These intervals provide insights into the precision of the estimates and allow us to evaluate their statistical significance.
+
+\begin{table}[h!]
+\centering
+\caption{Parameter Estimates with 95\% Confidence Intervals}
+\label{tab:ci_results}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error} & \textbf{95\% Confidence Interval} \\ \midrule
+$c$      & 2.2312  & 0.4102  & [1.4271, 3.0352] \\
+$\phi$   & 0.9452  & 0.0100  & [0.9255, 0.9648] \\
+$\theta$ & 0.2837  & 0.0309  & [0.2231, 0.3443] \\
+$\nu$    & 3.4691  & 0.3603  & [2.7630, 4.1752] \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Parameter Estimates with \( T = 50,000 \) Observations}
+\label{tab:results_large_sample}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error (SE)} & \textbf{Covariance Matrix Element} \\ \midrule
+$c$      & 1.9604  & 0.0480  & 0.0023  \\
+$\phi$   & 0.9511  & 0.0071  & 0.0000  \\
+$\theta$ & 0.2425  & 0.0045  & 0.0000  \\
+$\nu$    & 3.9719  & 0.0548  & 0.0030  \\ \midrule
+\textbf{Metrics} & \multicolumn{3}{c}{} \\ \midrule
+Negative Log-Likelihood & \multicolumn{3}{c}{$8.4302 \times 10^4$} \\
+Gradient Magnitude      & \multicolumn{3}{c}{$\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}$} \\
+Optimization Exit Flag  & \multicolumn{3}{c}{1 (Successful Convergence)} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Comparison of Parameter Estimates (\( T = 800 \) vs. \( T = 50,000 \))}
+\label{tab:param_estimates_comparison}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Estimate (\( T = 800 \))} & \textbf{Estimate (\( T = 50,000 \))} \\ \midrule
+$c$      & 2.2456  & 1.9604  \\
+$\phi$   & 0.9446  & 0.9511  \\
+$\theta$ & 0.2834  & 0.2425  \\
+$\nu$    & 3.4515  & 3.9719  \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Comparison of Standard Errors (\( T = 800 \) vs. \( T = 50,000 \))}
+\label{tab:std_errors_comparison}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{SE (\( T = 800 \))} & \textbf{SE (\( T = 50,000 \))} \\ \midrule
+$c$      & 0.404   & 0.0480  \\
+$\phi$   & 0.0100  & 0.0071  \\
+$\theta$ & 0.0309  & 0.0045  \\
+$\nu$    & 0.347   & 0.0548  \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{Comparison of Covariance Matrix Diagonal Elements (\( T = 800 \) vs. \( T = 50,000 \))}
+\label{tab:cov_matrix_comparison}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Covariance (\( T = 800 \))} & \textbf{Covariance (\( T = 50,000 \))} \\ \midrule
+$c$      & 0.1632  & 0.0023  \\
+$\phi$   & 0.0001  & 0.0000  \\
+$\theta$ & 0.0009  & 0.0000  \\
+$\nu$    & 0.1205  & 0.0030  \\ \bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
