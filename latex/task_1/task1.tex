@@ -212,13 +212,57 @@ We moreover can observe how the negative log likelihood increases from 386.5 (T=
 Finally Table~\ref{tab:cov_matrix_comparison} shows how the covarinace matrix shrinks consistently, indicating a reduced uncertainty in the paramter estimates as T increases. 
 The increase in the number of observations from 800 to 50000 highlights the importance of the sample size, as it not only reduces the estimations the estimation errors but also provides reliable measures of uncertainty.
 
+\section{Conditional Maximum Likelihood}
+It is common in practice that we dont know the underlying distribution of the stochastic process.
+This makes it challenging to specify the correct conditional density function, and often results in the misspecification of the conditional denisty function.
+Such misspecification has implications for the parameter estimates: while some parameter estimates may remain consistent, others may be affected by the misspecification.
+In cases of misspecified densities, we transition from the framework of Maximum Likelihood Estimation (MLE) to Quasi-Maximum Likelihood Estimation (QMLE).
+Under QMLE, the parameter estimates are obtained as though the specified conditional density were correct, even when it is not. 
+In the following, we deliberately assume an incorrect conditional density by selecting a Gaussian distribution for the innovations, even though the true underlying innovations are \( t \)-distributed.
+This careful misspecification involves selecting a conditional density from the same family of distributions—in this case, the exponential family.
+By doing so, we aim to retain some desirable properties of the estimators, such as consistency and asymptotic normality, for certain parameters.
+However, the misspecification precludes achieving efficiency for the parameter estimates, meaning that the standard errors will differ, leading to different confidence intervals.
+Specifically we will for the following assume that our innovation $\epsilon_t$ are Gaussian instead of t distributed.
+ \begin{equation}
+     \epsilon_t \sim N(0,\sigma^2) 
+ \end{equation}
+This assumption introduces a misspecification, as the true innovations are \( t \)-distributed. However, by carefully selecting a distribution from the same family (exponential family in this case), we hope to maintain consistency for some parameter estimates. 
+ Our new conditional log likelihood function now looks the following
+ \begin{equation}
+     ln L = \sum_{t=2}^{T} ln (\frac{1}{\sqrt{2\pi \sigma^2}} exp(\frac{(y_t -c -\phi y_{t-1} - \theta \epsilon_{t-1})^2}{-2 \sigma^2} ))
+ \end{equation}
+Despite the misspecification, we still expect consistency for some of our parameter estimates, as the QMLE framework is robust under mild conditions. However, efficiency is lost, resulting in different standard errors and confidence intervals compared to those obtained under the correct distributional assumption.
+The QML results based on the Gaussian assumption for the innovations are presented in Table~\ref{tab:qml_results}. It is clearly visible that while some paramter specifications remain robust especially for $\phi$, the misspecification introduces slight deviations for other paramter values such as c or $\theta$.
+c for instance is slightly overestimated compared to the true value, likely due to the Gaussian misspecification. The same holds for $\theta$, which is slightly overestimated. On the other hand the estimate for $\phi$ is close to the true value. The fourth parameter cant be interpreted as it now measures the variance instead of the degrees of freedom.
+Moreover, The negative log-likelihood at the optimum is 1434.4236, higher than the 1386.5 under the correct t-distribution.
+This reflects the poorer fit of the Gaussian assumption compared to the true t-distribution, as the Gaussian density cannot account for the heavy tails of the innovations. The diagonal elements for the variance covariance matrix suggest relatively precise estimates for $\phi$ and $\theta$ but higher uncertainty for c and $\nu$.
+Having conducted Quasi-Conditional Maximum Likelihood (QML) estimation under the Gaussian assumption, we now report the estimated parameters, their standard errors, and the 95\% confidence intervals.  This allows us to directly compare the QML findings with the Maximum Likelihood (ML) findings, where the true t-distribution of the innovations was correctly specified. By contrasting the two sets of results, we aim to evaluate the impact of the misspecified density on the parameter estimates and their precision.
+By observing the standard errors of the Quasi Maximum Likelihood estimation we see that they are generally larger than the conditonal Maximum Likelihood standard errors from the section before. This loss seems to be consistent due to the misspecification.
+Furtheremore, The 95\% confidence intervals for the QML estimates are wider than those for the ML estimates, reflecting reduced precision. However, the intervals still include plausible values, showing that the QML estimates retain some reliability. Especilly as the estimate for instance of $\phi$ lies in the confidence intervall we could not reject the nullhypothesis that for this paramter estimate.
 
 
+\section{Simulation}
+In order to better understand the variability of the paramter estimates under Conditional Maximum Likelihood (ML) and Conditional Quasi Maximum Lieklihood (QML), we will simulate the 2500 realizations of the ARMA(1,1) process using the true paramter values, the length and burn-in phase we have used in the first section, which will yield us a matrix of 2500 ensemble realizations.
+For each realization, we estimate the parameters using both ML (correct t-distribution assumption) and QML (Gaussian assumption).
+We will then use the parameter estimates to analyze the distribution of the estimates across all realizations. 
+Additionally, recovering the covariance matrices and extracting standard errors allows us to evaluate the precision of the estimates for both methods under repeated sampling. We hope to get insights into the robustness and precission of ML and QML approaches under varying realizations of the stochastic process.
+This repeated simulation will also help comparing the ML and QML results for different realizations of the process, and furtheremore, asessing the impact of missspecifying the distribution of the Quasi Maximum Likelihood estimation in the paramter estimates and standard errors.
+For the results of our estimates we will provide the visualizations in Figure(2) where we display the kernel density plots for the parameter estimates for $c, \phi,\theta$obtained using both Maximum Likelihood (ML) and Quasi-Maximum Likelihood (QML). 
+Kernel density plots here provide a smooth continous representation of the distribution of parameter estimates, allowing for a visual comparison of their behavior under ML and QML frameworks.
+The first plot displays the estimation of the intercept term $c$ over 2500 realizations using the ML and QML frameworks. It clearly shows how the ML density (blue) is centered slightly closer to the true value of c=2 compared to the QML density (red). Moreover, the red density shows a greater spread , reflecting increased variability due to the misspecified Gaussian assumption.
+We can conclude that for the 2500 simulations the ML estimation provides a more precise and accurate estimate of c then the QML framework. 
+The second plot shows the estimation of the $\phi$ term. Different to the $c$ paramter here Both ML and QML densities are tightly centered near $\phi$ = 0.95, indicating robustness of this parameter to misspecification.The spread of QML estimates is marginally wider, showing a slight loss of efficiency compared to ML. We could conclude that the $\phi$ term is robust to misspecification, with both ML and QML yielding highly accurate estimates.
+Finally for the $\theta$ estimate we again see that both densities are tightly centered near the $\theta$ = 0.25. The ML density is slightly more peaked and centered closer to the true value compared to the QML density. The QML density is more spread out, indicating greater variability under the misspecified Gaussian assumption.
+For all the three paramters the ML estimates provide more precise estimates, especially the $c$ paramter estimates of the QML estimation shows a greater variability.
+The results underscore the loss of efficiency when misspecifying the condtional densities when using the Quasi Maximum Likelihood framework, nevertheless we are still able to get close estimates for parameters like $\phi$ when carefully selcting the density from a familiar distribution.
 
-
-
-
-
+\subsection{Ci and se}
+Finally we want to emphasize again on the properties of the condtional Maximum Likelihood approach and therefore we will now compute the confidence intervalls for our ML estimates of the 2500 realizations based on the prior calculates standard errors.
+By comparing these intervals to the true parameter values used to simulate the ARMA(1,1) process, we can determine the proportion of intervals that successfully contain the true values. The results for the confidence intervalls can be found in Table~\ref{tab:coverage_results}. Overall it is to say that the coverage results are very close to the 95\% level, underscoring that the conditional Ml estimation procedure is providing reliable confidence intervals for all parameters. Especially the coverage for
+the intercept $c$ (94.72\%) is very close to the 95\% level. 
+The coverage for $\phi$ is also close to the 95\% level, a finding that is underscored by the Kernel density plots in figure 2, where the estimated paramters for $\phi$ often laid close to the true parameter value. 
+For the MA coefficient the coverage is slightly lower (94,28\%) the for the other two paramters and for the $\nu$ parameter the coverage slightly exceeds the nominal 95\% level.
+Nevertheless coverage results confirm that the confidence intervals constructed using the ML estimates and their standard errors are well-calibrated, with proportions close to the nominal 95\% level. The slight deviations from 95\% are normal and do not raise concerns about the reliability of the ML estimation procedure. The results again underscore the valuable properties of the condtional maximum likelihood estimation that entail, efficiency, consistency and asymptotic normalitly especially for large samples.
 \section{Extra}
 We could also be verifying stationarity by looking at the characteristic polyonomial in which case the roots z must be bigger then one in absolute terms. We can find z by $\frac{1}{0.95}$ which would yield 1.0526 which is bigger then one, therefore our process would be stationary.
 
@@ -369,5 +413,59 @@ $\theta$ & 0.0009  & 0.0000  \\
 $\nu$    & 0.1205  & 0.0030  \\ \bottomrule
 \end{tabular}
 \end{table}
+
+
+
+
+\begin{table}[h!]
+\centering
+\caption{Quasi-Conditional Maximum Likelihood (QML) Results for ARMA(1,1) (Gaussian Assumption)}
+\label{tab:qml_results}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{True Value} & \textbf{QML Estimate} & \textbf{Standard Error (SE)} \\ \midrule
+$c$      & 2.00  & 2.3537  & 0.455 \\ 
+$\phi$   & 0.95  & 0.9418  & 0.010 \\ 
+$\theta$ & 0.25  & 0.3012  & 0.033 \\ 
+$\nu$    & 4.00  & 2.1227  & 0.162 \\ \midrule
+\textbf{Metric} & \multicolumn{3}{c}{} \\ \midrule
+Negative Log-Likelihood & \multicolumn{3}{c}{1434.4236} \\
+Gradient Magnitude      & \multicolumn{3}{c}{$\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}$} \\
+Optimization Exit Flag  & \multicolumn{3}{c}{1 (Successful Convergence)} \\ \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\caption{QML Parameter Estimates with 95\% Confidence Intervals (Gaussian Assumption)}
+\label{tab:qml_ci_results}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error (SE)} & \textbf{95\% CI Lower Bound} & \textbf{95\% CI Upper Bound} \\ \midrule
+$c$      & 2.3537  & 0.4550  & 1.4618  & 3.2455  \\
+$\phi$   & 0.9418  & 0.0111  & 0.9201  & 0.9635  \\
+$\theta$ & 0.3012  & 0.0333  & 0.2359  & 0.3665  \\
+$\sigma^2$ & 2.1227 & 0.1624  & 1.8043  & 2.4410  \\ \bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+\begin{table}[h!]
+\centering
+\caption{Coverage Results: Proportion of 95\% Confidence Intervals Containing True Parameter Values}
+\label{tab:coverage_results}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Parameter} & \textbf{True Value} & \textbf{Coverage (\%)} \\ \midrule
+$c$      & 2.00  & 94.72  \\
+$\phi$   & 0.95  & 94.60  \\
+$\theta$ & 0.25  & 94.28  \\
+$\nu$    & 4.00  & 95.96  \\ \bottomrule
+\end{tabular}
+\end{table}
+
+
 
 \end{document}
