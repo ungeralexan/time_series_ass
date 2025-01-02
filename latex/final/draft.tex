@@ -1,0 +1,288 @@
+\documentclass[12pt]{article}
+\usepackage[a4paper, left=2.5cm, top=2.5cm, right=2.5cm]{geometry}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{natbib}
+\usepackage{booktabs}
+\usepackage{setspace}
+\usepackage{caption}
+
+\begin{document}
+\clearpage
+\title{ATS Assignment}
+\author{601223}
+\date{Date of Submission: January 12}
+
+\begin{titlepage}
+\textbf{\Large ATS Assignment}
+\end{titlepage}
+
+\tableofcontents
+
+\newpage
+
+\setstretch{1.2}
+\section{Introduction}
+Time series data are prevalent not only in traditional fields such as economics and finance but also in emerging areas like engineering and machine learning. 
+Analyzing and understanding the underlying process that generates time series data is critical for tasks such as forecasting or hypothesis testing.
+A key step in this analysis is the identification and application of appropriate models, with Autoregressive Moving Average (ARMA) models being particularly popular due to their effective combination of autoregressive and moving average components.
+However, a fundamental challenge arises from the fact that, in practice, we often observe only a single realization of the stochastic process. This limitation necessitates reliance on statistical properties like stationarity and ergodicity, which allow us to make meaningful inferences about the true data-generating process from the observed series.
+Once stationarity is established, the next crucial task is the estimation of parameters. Here Maximum Likelihood provides a rigorous framework for this purpose, offering desirable properties such as consistency and efficiency when the likelihood function is correctly specified. However, specifying the correct likelihood often requires substantial knowledge about the underlying process, which may not always be available. In such cases, quasi-maximum likelihood estimation (QMLE) serves as an alternative, allowing for approximate likelihood functions that can still yield valuable parameter estimates under broader conditions.
+In our paper, we aim to bridge the gap between theory and application.
+We will simulate a realization of a process whose true parameter specification follows an ARMA(1,1) model. Given the presence of stationarity, which we will later test using the Dickey-Fuller test, we will simulate two scenarios: one where the true likelihood function is defined (assuming we know the true distribution of the innovations) and one with a misspecified likelihood.
+We will begin by estimating the parameters through numerical optimization, minimizing the negative log-likelihood. For the scenario with the true likelihood, we will explore the impact of increasing the sample size on the precision of our estimates. Additionally, we will repeat the simulations for a fixed sample size to evaluate the confidence intervals of the estimated parameters.
+Finally, we will analyze the case of likelihood misspecification, examining how the parameter estimates are affected and identifying the properties of these estimates under misspecification.
+\section{The true data generating Process}
+For the purpose of our analysis we will first introduce our true ARMA model which is an ARMA(1,1) model with the parameter specification that can be seen in Equation\eqref{eq:arma}.
+The innovation terms of our process $\epsilon_t$ will be t distributed, where we will define $\nu$ =4, meaning four degrees of freedom. Hence, the distribution of the innovations has heavier tails tails than the Gaussian distribution.\\
+As mentioned in Hamilton in order to assess whether the process is stationary or not one has to check the autoregressive especifically whether the autoregressive coefficient ($\phi$) is smaller then one in absolute terms. 
+As the autoregressive coefficient is smaller then one in absolute terms what can be seen, we can conclude that the true data generating process from whom we simulate the data is stationary.
+As our process is stationary, the coefficients our coefficients are absolutely summable and can define the process in a MA infinity representation which would yield after Hamilton Equation\eqref{eq:Mainf}.
+For simulation purpose we created a MATLAB function that simulates the data given the parameter values we defined in \eqref{eq:arma}.
+To create our data we simulated 800 observations, but due to dependencies in the first 50 observations we decided to discard the first 50 observations as burn in phase. Moreover, we set the starting values for our simulation equal to the expected value of the process which can be seen in Equation\eqref{eq:Mean}.
+
+\section{Dicky Fuller Test}
+From this point onward, we shift from the theoretical framework to a practical scenario where the underlying process generating the time series data is unknown. 
+This uncertainty poses challenges when attempting to extrapolate moments of the series to represent the true population moments.
+To address this and in order to later enable a meaningful parameter estimatuon with Maximum Likelihood, we first need to confirm the stationariyt of the process.
+Therefore, in this section we will conduct the Dickey-Fuller test, which evaluates whether the series contains a uni root.
+A possible presence of a unit root would indicate non-stationarity and therefore, make it the realization unsuitable for the assumptions required in our subsequent analysis.
+To perform the Dickey-Fuller test, we first need to choose an appropriate case for our estimated model.
+This descision will be guided by a visual inspection of Figure~\ref{fig:armaone}., which will determine the most suitable test specification.
+\subsection{The case of the Dickey Fuller test}
+Figure~\ref{fig:armaone} clearly demonstrates that the series fluctuates randomly around a nonzero mean, which in this case is 40. This mean is highlighted by the red line in the plot.
+Given this observation we aim to choose a test specification that yields enough power to the stationary alternative i.e., its ability to reject a false null hypothesis.
+The second case of the Dickey-Fuller test is most appropriate here because the alternative model in this case can account for a process with random fluctuations around a nonzero mean. \\
+If we were to choose the first case of the Dickey-Fuller test, it would assume the data fluctuates around a zero mean, which does not align with the observed behavior of our data.
+ This mismatch would result in reduced power for the stationary alternative, making it less likely to detect stationarity when it exists.\\
+Similarly, the third and fourth cases can also be discarded. Case 3 is unsuitable because we do not observe a drift in the data, and Case 4 is not applicable as there is no discernible upward or downward trend. Selecting either of these cases would again fail to provide the stationary alternative with sufficient power to capture the true behavior of the process.\\
+Thus, based on these considerations, the second case of the Dickey-Fuller test aligns perfectly with the characteristics of the data as shown in the plot.\\
+For the second case of the Dickey-Fuller test, we will first consider the model specified under the null hypothesis, as shown in \eqref{eq:true}, and the corresponding alternative hypothesis model, depicted in \eqref{eq:alternative}. Based on the data, we will estimate the alternative model outlined in \eqref{eq:alternative}, which is appropriate for this test case.
+Using Ordinary Least Squares (OLS), we estimate the parameters $\hat{\alpha}, \hat{\rho}$ obtaining $\hat{\rho} = 0.96$ and $\hat{\alpha}$ = 1.46. The corresponding standard errors are $s.e.(\hat{\rho})$=0.01 and 
+$s.e.(\hat{\alpha})$ = 0.4, providing insight into the precision of these estimates.
+If we would compare the  paramter estimates with our true parameter values in the second equation, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. On the other hand the value for the constant $\alpha$ differs more noticeably from the true intercept. This is moreover underscored by the standard errors.
+\subsubsection{Test statistic}
+We will now  test for an unit root in $y_t$ using the second case of the Dicky Fuller test. 
+We therefore define our Nullhypothesis and alternative hypothesis in Equation\eqref{eq:dftest}.
+To test whether the series entails an unit root or not the complete test statistic is defined in Equation\eqref{eq:dftstat2}.
+It is important to mention that the Test statistic under the Null is not normally distributed as we are now in the case where we asumme an unit root. Nevertheless, we know that the distribution of the test statistic under the null is nonstandard but as well nuisance parameter free. For our critical values we now cannot use the conventional 1.96 from the normal distribution. Instead we will compare it  against the critical values of the from the Dicky Fuller table.
+For over 500 observations, a zero trend case, and a 5\% significance level, the critical value is approximately -2.86.
+The resulting value of our test statistic is -3.66 and therfore is less then -2.86, and therefore we do not fail to reject the nullhypothesis of an unit root for the significance level of 5 percent.\\
+ Having confirmed that the process does not contain a unit root, we will proceed to estimate its parameters using Maximum Likelihood (ML). Initially, we will assume that the correct density is specified, and subsequently, we will explore the effects of misspecifying the density.
+
+\section{Maximum Likelihood estimation}
+For the parameter estimation, we will now employ Maximum Likelihood, specifically Conditional Maximum Likelihood (CMLE). 
+Unlike exact Maximum Likelihood, CMLE assumes the first observation, $y_1$, is deterministic and maximizes the likelihood conditioned on this initial value see Hamilton p(122).
+This approach is computationally efficient, as noted by Hamilton (p. 123), and under the assumption of a large sample size, the first observation makes a negligible contribution to the total likelihood. 
+Given the stationarity condition $\phi < 1$ (proven in the previous section), the Maximum Likelihood Estimators (MLE) and Conditional Maximum Likelihood Estimators (CMLE) share the same large-sample distribution.\\
+In order to get the maximum likelihood estimates this paper will follow two steps. First we will propose two distinct parameter specifications and compare their respective log-likelihood values. This comparison allows us to determine which specification offers a better fit to the data, thereby providing insights into the underlying dynamics of the process.
+Afterwards we will try to estimate the paramters by numerical search which in this context will be minimizing the log likelihood.
+ \subsection{Estimate the Likelihood}
+In order to implement our first approach, we compute the conditional log-likelihood contributions for each time step. Therefore we have to construct the likelihood function specifyng the underlying densities for each observation. 
+Assuming we are in a situation where we correctly specify our densities knowing that the innovations of the process follow a t distribution our conditional log likelihood contributions can be seen in Equation \eqref{eq:clc}.
+To stabilize the maximization process, we work with the log of the densities rather than the densities themselves. This transformation allows us to sum the log-densities instead of multiplying the densities, improving numerical stability.
+The total conditional log likelihood is then obtained by summing these contributions over all time steps, as it can be seen in Equation \eqref{eq:tcl}.
+In the following analysis, we will use two parameter specifications to compute the conditional likelihood. First, we will calculate the conditional log-likelihood for the true parameters that generated the series. We will then compare this value to the log-likelihood obtained using an alternative parameter specification. The two parameter specifications are presented in \ref{specifica}. The results are displayed in Table~\ref{tab:log_likelihood_results}.
+It can clearly be seen, that the conditional log-likelihood value for Case (a) (the true parameter specification) is notably higher (less negative) than that for Case (b). This indicates that the true parameters provide a better fit to the observed series compared to the alternative specification.
+In the context of log-likelihood, higher (or less negative) values indicate greater probability density for the observed data, suggesting that the specified parameters are more likely to have generated the series.
+The deviations in the AR and MA coefficients, as well as the degree of freedom parameter $\nu$, result in a suboptimal representation of the data-generating process. 
+This discrepancy underscores the sensitivity of CMLE when it comes to parameter specification.
+By explicitly accounting for the heavy-tailed $t$-distributed innovations, CMLE effectively distinguishes between parameter sets and favors those that align closely with the true data-generating process.
+
+\subsection{Estimate the parameters using numerical minimization}
+In order to estimate the parameters $c, \phi, \theta,\nu$ we will be minimizing the negative log-likelihood. We therefore adopt a numerical optimization approach. It is worth noting that these two approaches are mathematically equivalent, as minimizing the negative of a function is the same as maximizing the original function. This equivalence stems from the monotonic nature of the negative operation, which preserves the order of the optimization objective.
+To adapt our method, we refine the log-likelihood function introduced earlier Equation \eqref{eq:tcl} to return its negative value.
+We convert that in order to ensure compatibility with standard numerical optimization algorithms, which are designed to find the minimum of an objective function.
+In order to minimze the negative of the function we used the 'fminsearch' algorithm from MATLAB which is also known as derivate free optimization. 
+We moreover, specified a Hessian-based covariance matrix to quantify parameter uncertainty and initialized the estimation procedure with the following values c = 1.5, $\phi$ = 0.75, $\theta$ = 0.5, $\nu$ = 5.
+The results of the numerical optimization can be found in Table~\ref{tab:optimization_results}. Our results indicate that the Conditional Maximum Likelihood Estimation (CMLE) approach successfully estimated the parameters of the ARMA(1,1) process.
+The estimated values for \(c\), \(\phi\), \(\theta\), and \(\nu\) are close to their true values, demonstrating the accuracy of the method.
+The constant term  \(\hat{c} = 2.2456\), closely approximates the true value of \(c = 2\),  while the autoregressive coefficient  \(\hat{\phi} = 0.9446\) is near the true \(\phi = 0.95\), effectively capturing the process's dependency structure. Similarly, the moving average coefficient \(\hat{\theta} = 0.2834\) aligns well with the true \(\theta = 0.25\). Finally, the estimated degrees of freedom for the \(t\)-distributed innovations \(\hat{\nu} = 3.4515\) closely reflect the true \(\nu = 4\), indicating the model's ability to capture the heavy-tailed nature of the errors.
+The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. Furtheremore, the minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates, while the small gradient magnitude at the optimum (\(\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}\)). It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
+
+\subsection{Confidence intervalls}
+To further assess the precission of the estimates we will be constructing constructing 95\% confidence intervals.
+The intervals are essential for determining the range within which the true parameter values are likely to lie, given the data and model assumptions.
+For values within the confidence interval, we fail to reject the null hypothesis at the 5\% significance level, suggesting that these values are in accord with the observed data. 
+Due to the asymptotic normality assumption of the Maximum Likelihood estimates we will treat the paramters as normally distributed even though our innovations are t distributed, wich will be underscored by our large sample size. 
+The results for our confidence intervalls which are displayed in Table~\ref{tab:firstconfidence_intervals}.
+The results indicate that all our estimates fall within the resepective confidence intervalls underscoring that we could could not reject the nullhypothesis that our estimate is the true value at least for 5 percent signifcance.
+Nevertheless, we want to emphasize on the fact the the intervalls especially for our parameters $c \, \text{and} \, \nu$ are relatively wide compared to those of the other parameters, indicating higher uncertainty in the estimate.
+Overall, the results confirm the robustness of the parameter estimates, with the confidence intervals supporting their statistical significance and alignment with the underlying process characteristics. 
+
+
+
+
+
+
+
+
+
+\newpage
+\section{Equations}
+\textbf{The equation for our true generated ARMA model}
+\begin{equation}
+    y_t = 2 + 0.95y_{t-1} + 0.25\epsilon_{t-1} + \epsilon_t
+\label{eq:arma}
+\end{equation}
+Where the innovations $\epsilon_t$ are t distributed.
+ \begin{equation}
+     \epsilon_t \sim t(\nu) 
+ \end{equation}
+\textbf{Stationarity test}
+\begin{equation}
+    |0.95| <= 1
+    \label{eq:stat}
+\end{equation}
+
+\textbf{Ma infinity Representation}
+ \begin{equation}
+    \mu + \Phi(L)\epsilon_t
+    \label{eq:Mainf}
+ \end{equation}
+
+ \textbf{Mean of the process}
+ \begin{equation}
+\frac{c}{1-\phi} = \frac{2}{1-0.95} = 40
+\label{eq:Mean}
+\end{equation}
+
+\textbf{Model under the Nullhypothesis}
+\begin{equation}
+    y_t = y_{t-1} + ut
+    \label{eq:true}
+\end{equation}
+Whereas for the Unit root process it is important to mention that $\alpha$ should be equal to zero and our $\phi$ should be equal to one.\\
+
+\textbf{Model under the alternative}
+\begin{equation}
+    y_t = \alpha + \rho y_{t-1} + ut
+    \label{eq:alternative}
+\end{equation}
+Whereas for the stationary alternative it is important to mention that $\alpha$ should be not equal to zero and our $\phi$ should be smaller then one in absolute terms.\\
+
+\textbf{Nullhypothesis}
+\begin{equation}
+\begin{aligned}
+    H_0 &: \rho = 1 \, \text{(unit root)} \\
+    H_1 &: \rho \neq 1 \, \text{(stationary alternative)}
+\end{aligned}
+\label{eq:dftest}
+\end{equation}
+
+\textbf{Test Statistic}
+\begin{equation}
+    t-stat: \frac{0.96-1}{0.01}
+    \label{eq:dftstat2}
+\end{equation}
+
+\textbf{Conditional log likelihood contributions}
+ \begin{equation}
+      l_{t} =  (ln \Gamma(\frac{\nu +1}{2})- ln(\sqrt{\nu \pi} * \Gamma(\frac{\nu}{2})) - \frac{\nu+1}{2}ln(1+\frac{\epsilon_t^{2}}{\nu}))
+      \label{eq:clc}
+ \end{equation}
+
+\textbf{Total conditional log likelihood}
+\begin{equation}
+    L_{total} = \sum_{t=2}^{T} l_t
+    \label{eq:tcl}
+\end{equation}
+
+\textbf{2 Parameter specifications}
+\begin{itemize}
+    \item \textbf{Case (a):} $c = 2, \phi = 0.95, \theta = 0.25, \nu = 4$ (the true parameters used to generate the data),
+    \item \textbf{Case (b):} $c = 1.5, \phi = 0.75, \theta = 0.5, \nu = 6$ (an alternative set of parameters).
+    \label{specifica}
+\end{itemize}
+
+
+
+
+\newpage
+\section{Tables}
+\textbf{OLS estimation results for Case II Dickey-Fuller}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error} \\ \hline
+$\hat{\alpha}$     & 1.46              & 0.4                     \\ \hline
+$\hat{\rho}$       & 0.96              & 0.01                    \\ \hline
+\end{tabular}
+\caption{Parameter estimates and their standard errors for the alternative hypothesis.}
+\label{tab:parameter_estimates}
+\end{table}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Case} & \textbf{Total Conditional Log-Likelihood} \\ \hline
+a             & -1388.3248                                \\ \hline
+b             & -5871.1921                                \\ \hline
+\end{tabular}
+\caption{Total conditional log-likelihood values for the two cases.}
+\label{tab:log_likelihood_results}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Optimization Results}              & \textbf{Values}                                                                 \\ \hline
+Termination Criteria                       & OPTIONS.TolX = $1.0 \times 10^{-40}$, OPTIONS.TolFun = $1.0 \times 10^{-40}$     \\ \hline
+Optimized Parameters                       & 2.2456, 0.9446, 0.2834, 3.4515                                                  \\ \hline
+Minimum Negative Log-Likelihood            & 1386.5                                                                          \\ \hline
+Gradient at Optimum                        & $\begin{pmatrix}
+0.000013 \\
+-0.002566 \\
+0.00002 \\
+0.000001
+\end{pmatrix}$                                                                  \\ \hline
+Covariance Matrix of Estimates             & $\begin{pmatrix}
+0.1632 & -0.0040 & 0.0030 & 0.0036 \\
+-0.0040 & 0.0001 & -0.0001 & -0.0001 \\
+0.0030 & -0.0001 & 0.0009 & -0.0000 \\
+0.0036 & -0.0001 & -0.0000 & 0.1205 \\
+\end{pmatrix}$                                                                \\ \hline
+Exit Flag from fminsearch                  & 1                                                                              \\ \hline
+\end{tabular}
+\caption{Summary of optimization results.}
+\label{tab:optimization_results}
+\end{table}
+
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error (SE)} & \textbf{95\% Confidence Interval (CI)} \\ \hline
+$c$     & 2.2456 & 0.4040 & [1.4538, 3.0375] \\ \hline
+$\phi$  & 0.9446 & 0.0099 & [0.9252, 0.9640] \\ \hline
+$\theta$ & 0.2834 & 0.0297 & [0.2251, 0.3417] \\ \hline
+$\nu$    & 3.4515 & 0.3471 & [2.7711, 4.1319] \\ \hline
+\end{tabular}
+\caption{Parameter estimates with standard errors and 95\% confidence intervals.}
+\label{tab:firstconfidence_intervals}
+\end{table}
+
+
+
+
+
+
+\newpage
+\section{Figures}
+ \begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.2\textwidth]{fina/arma_useone.jpg} 
+    \caption{The Simulated ARMA(1,1)}
+    \label{fig:armaone}
+\end{figure}
+
+\end{document}
