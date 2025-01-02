@@ -154,9 +154,34 @@ The coverage results confirm that the confidence intervls cocnstructed using the
 The results clearly demonstrate that MLE yields parameter estimates that are close to the true values across different realizations of the process. This provides valuable insights into the reliability and variability of MLE in finite-sample settings.
 
 
-
-
-
+\section{Conditional Maximum Likelihood}
+A very important condition in order to perform a Maximum Likelihood estimation is we have enough information to correctly specify our densities and the likelihood function.
+It is common in practice that we don't know the underlying distribution of the stochastic process.
+This challenges the correct specification of the conditional densities and sometimes result in the misspecification of the conditional density function.
+This missspecification has implications for our parameter estimates: while some parameter estimates may remain consistent, others may be affected by the misspecification.
+In the case of such a misspecification we transition from the framework of 
+Maximum Likelihood Estimation (MLE) to Quasi-Maximum Likelihood Estimation (QMLE).
+In the following, we deliberately assume an incorrect conditional density by selecting a Gaussian distribution for the innovations, even though the true underlying innovations are \( t \)-distributed.
+As for this misspecification we need to ocnstruct a new log likelihood function which depicted in Equation \ref{eq:QML}.
+Given the misspecification using conditional Maximum Likelihood for estimation will still yield some properties, such as consistency for parameters such as c,$\phi$ and $\theta$. Moreover for a large sample size our estimate $\phi$ will be asymptotically normal distributed.
+Nevertheless due to the misspecification of the innovation terms we will loose our efficiency property in this framework.
+We will now again use MATLABS numerical optimization techniques in order to minimize the negative sum of the condtional log likelihood.
+We therefore define the following starting values c = 1.5, $\phi$ = 0.75, $\theta$ = 0.5, $\sigma^2$ = 1.
+The QML estimation results are presented in Table~\ref{tab:qml_results}.
+Our estimated parameter values indicate that some estimated parameter values such as the one for the  $\phi$ remain precise as it is close to the true parameter value of 0.95. On the other hand the parameter value estimates c or $\theta$ sligthly vary from the true parameter values.
+c for instance is slightly underestimated compared to the true value and $\theta$ is clearly overestimated.
+The estimate for the fourth parameter now represents teh variance instead of the degrees of freedom due to the fact that we false assume a normal distribution for the innovations.
+The negative log-likelihood at the optimum is 1434.4236, higher than the 1386.5 under the correct t-distribution.
+This reflects the poorer fit of the Gaussian assumption compared to the true t-distribution.
+When we now report the standard erros for our estimated parameters that we get by square of the main diagonal of the variance covariance matrix we see that we get a relatively precise estimate for $\phi$ but higher uncertainty for c , $\theta$ and $\nu$.
+Overall the standard erros of the Quasi Maximum Likelihood estimation are generally larger than the conditional Maximum Likelihood standard errors. This loss seems to be consistent due to the misspecification.
+The 95\% confidence intervalls provide us with a range for which we can not reject the nullhypothesis that these values equal the true value at least for a 5\% significance level.
+As we assume that for a large sample our estimate $\phi$ follows an asymptotically normal distribution we will use the quantiles of the normal distribution to construct the confidence intervalls.
+The 95\% confidence intervals for the QML estimates are wider than those for the ML estimates, reflecting reduced precision.
+However the confidence intervals for our three parameters $c, \phi, \theta$ all include the true value of process and we therefore cannot reject the nullhypothesis that the true our estimate equals the true value for a significance level of 5\%.
+So even though we lack of precision in comparison to the Maximum Likelihood framework we still can claim consistency for our estimates.
+\subsection{Simulate Realizations of the process}
+Finally we will again simulate different realizations of the process as we have done in task 4.2 and will now again estimate the first three parameters repeatidly for each realization of the process with Quasi Maximum Likelihood. In again this theoretical scenario we want to plot the distribution of the estimates against the distribution of the estimates under Maximum Likelihood and then assess how the estimates vary around the true parameters.
 
 
 
@@ -262,6 +287,11 @@ t = \frac{0.95 - 0.8}{0.001} = \frac{0.15}{0.0100} = 150.
     \label{eq:tstatmltwo}
 \end{equation}
 
+\textbf{Quasi Maximum Likelihood}
+ \begin{equation}
+     ln L = \sum_{t=2}^{T} ln (\frac{1}{\sqrt{2\pi \sigma^2}} exp(\frac{(y_t -c -\phi y_{t-1} - \theta \epsilon_{t-1})^2}{-2 \sigma^2} ))
+     \label{eq:QML}
+ \end{equation}
 
 \newpage
 \section{Tables}
@@ -377,6 +407,51 @@ $\nu$    & 3.9719 & 0.0548 & [3.8644, 4.0794] \\ \hline
 
 
 
+\textbf{Quasi Maximum Likelihood}
+\begin{table}[h!]
+\centering
+\caption{QML Results (Gaussian Assumption) for ARMA(1,1)}
+\label{tab:qml_results}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Section} & \multicolumn{4}{c}{\textbf{Values}} \\
+\midrule
+\multicolumn{5}{l}{\textbf{Estimated Parameters}} \\
+\cmidrule(l){2-5}
+ & 2.3537 & 0.9418 & 0.3012 & 2.1227 \\
+\midrule
+\multicolumn{5}{l}{\textbf{Negative Log-Likelihood at Optimum}} \\
+\cmidrule(l){2-5}
+ & \multicolumn{4}{c}{1434.4236} \\
+\midrule
+\multicolumn{5}{l}{\textbf{Gradient at Optimum} ($1.0 \times 10^{-5} \times$)} \\
+\cmidrule(l){2-5}
+ & -0.0010 & -0.2255 & -0.0002 & 0.0001 \\
+\midrule
+\multicolumn{5}{l}{\textbf{Covariance Matrix (QML-based)}} \\
+\cmidrule(l){1-5}
+0.2071 & -0.0050 & 0.0034 & 0.0004 & \\
+-0.0050 & 0.0001 & -0.0001 & -0.0000 & \\
+0.0034 & -0.0001 & 0.0011 & 0.0005 & \\
+0.0004 & -0.0000 & 0.0005 & 0.0264 & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Quasi Maximum Likelihood Se and CI}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error (SE)} & \textbf{95\% Confidence Interval (CI)} \\ \hline
+$c$       & 2.3537 & 0.4550 & [1.4618, 3.2455] \\ \hline
+$\phi$    & 0.9418 & 0.0111 & [0.9201, 0.9635] \\ \hline
+$\theta$  & 0.3012 & 0.0333 & [0.2359, 0.3665] \\ \hline
+$\sigma^2$ & 2.1227 & 0.1624 & [1.8043, 2.4410] \\ \hline
+\end{tabular}
+\caption{Parameter estimates with standard errors and 95\% confidence intervals.}
+\label{tab:parameter_estimates_qml}
+\end{table}
 
 
 
