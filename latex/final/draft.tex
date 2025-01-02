@@ -138,7 +138,28 @@ If we would again define the Nullhypothesis which is depicted in Equation  \ref{
 As for the asymptotic normality property for our parameter estimate that is yielded by the Maximum likelihood estimation we again asume that our test statistic is asymptotically normal distributed. We therefore again use the critical value of 1.96 for a significance level of 5\.%
 As the value of our test statistic exceeds the critical value of 1.96 clearly we can reject the Nullhypothesis that the true value equals 0.8 for a significance level of 5\%.
 The increase of the sample size once again underlines the importnat properties that the maximum likelihood estimation technique yields when we correctly specify the likelihood function.These properties entail consistency, efficiency and asymptotic normality.
- 
+\subsection{Simulate various realizations of the process.}
+An alternative approach to estimating the parameters of a stochastic process involves simulating multiple realizations of the process, each of the same length. 
+While this method is typically not feasible in real-world applications—where only a single realization of the process is observed—it provides valuable insights in a theoretical scenario. Specifically, by assuming we know the true parameter values of the process, we can simulate independent realizations to explore how Maximum Likelihood Estimates (MLEs) vary around the true parameters.
+To approximate the variability of the MLE for a given sample size, we simulate 2,500 realizations of the process. For each realization, we estimate the parameter values using MLE. This exercise allows us to study the distribution of the parameter estimates and with that gain a deeper understanding of the estimator's finite-sample properties.
+To analyze the results of our 2,500 simulated estimates, we present visualizations using kernel density plots for the parameter estimates  $c, \phi,\theta$.
+Kernel density plots offer a smooth and continuous representation of the distribution of these estimates, helping to illustrate their variability and central tendencies.
+The first plot which displays the estimation of the intercept term $c$ estimates across 2500 realizations.The density is clearly centered around the true value of 2, with a slight spread indicating some variability. Nevertheless, the distribution is tightly clustered, confirming that the estimates consistently hover near the true value.
+The second plot depicts the distribution of estimates for $\phi$. This distribution is sharply peaked around the true value of 0.95 with minimal variance, highlighting the high precision of the MLE for this parameter. The narrow spread underscores that the vast majority of estimates lie very close to 0.95.
+Finally for the $\theta$ estimate we again see that the density is tightly centered near the true $\theta$ value of 0.25. It indicates that the MLE effectively recovers the true parameter values for $\theta$ as well.
+To further assess the performance of the estimators, we constructed 95\% confidence intervals for each parameter and evaluated their coverage probabilities—i.e., the proportion of intervals that capture the true parameter value.The results, shown in Table 11, reveal that the coverage for 
+c (94.72\%) and $\phi$ (95.01\%) are very close to the nominal 95\% level, aligning with the patterns observed in the kernel density plots. 
+For $\theta$ the coverage is slightly lower at 94.28\%, and for the $\nu$ parameter the coverage slightly exceeds the nominal 95\% level.
+The coverage results confirm that the confidence intervls cocnstructed using the ML estimates and their standard errors are well calibrated with proportions close to the nominal 95\% level.
+The results clearly demonstrate that MLE yields parameter estimates that are close to the true values across different realizations of the process. This provides valuable insights into the reliability and variability of MLE in finite-sample settings.
+
+
+
+
+
+
+
+
 
 
 
