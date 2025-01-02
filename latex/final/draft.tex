@@ -105,19 +105,40 @@ The constant term  \(\hat{c} = 2.2456\), closely approximates the true value of 
 The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. Furtheremore, the minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates, while the small gradient magnitude at the optimum (\(\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}\)). It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
 
 \subsection{Confidence intervalls}
-To further assess the precission of the estimates we will be constructing constructing 95\% confidence intervals.
-The intervals are essential for determining the range within which the true parameter values are likely to lie, given the data and model assumptions.
-For values within the confidence interval, we fail to reject the null hypothesis at the 5\% significance level, suggesting that these values are in accord with the observed data. 
-Due to the asymptotic normality assumption of the Maximum Likelihood estimates we will treat the paramters as normally distributed even though our innovations are t distributed, wich will be underscored by our large sample size. 
-The results for our confidence intervalls which are displayed in Table~\ref{tab:firstconfidence_intervals}.
-The results indicate that all our estimates fall within the resepective confidence intervalls underscoring that we could could not reject the nullhypothesis that our estimate is the true value at least for 5 percent signifcance.
-Nevertheless, we want to emphasize on the fact the the intervalls especially for our parameters $c \, \text{and} \, \nu$ are relatively wide compared to those of the other parameters, indicating higher uncertainty in the estimate.
-Overall, the results confirm the robustness of the parameter estimates, with the confidence intervals supporting their statistical significance and alignment with the underlying process characteristics. 
-
-
-
-
-
+To further assess the precision of our computed estimates we constructed the 95\% confidence intervals.
+The intervals are essential providing the range within which the true parameter values are likeli to lie, given the data.
+For values within the confidence interval, we fail to reject the null hypothesis at the 5\% significance level, that these values equal the true values of the parameters.
+As the Maximum Likelihood estimation of the parameter yields asymptotic normality we will use the conventional quantiles of the normal distribution when computing the 95\% confidence intervals.
+The results for our confidence intervals are displayed in Table~\ref{tab:firstconfidence_intervals}.
+The results indicate that all our estimates fall within the resepective 95\% confidence intervalls highlighting that we could not reject the nullhypothesis that our estimates equal the true value at least for a 5 percent significance level.
+Nevertheless, we want to emphasize on the fact the the intervals especially for our parameters $c \, \text{and} \, \nu$ are relatively wide compared to those of the other parameters, indicating higher uncertainty in the estimate.
+Overall, the results underline the statistical significance of our estimates and therefore also highlight one of the properties of Maximum Likelihood which is the consistency of our estimates.
+\subsection{T-test}
+Building on the insights gained from the confidence intervals, we now turn to hypothesis testing.
+Specifically, we aim to test whether the autoregressive coefficient $\phi$ differs significantly from the hypothesized value of 0.8.
+Using the t-test and a significance level of 5\%, we aim to evaluate whether the data provides sufficient evidence to reject this hypothesis.
+The Nullhypothesis that claims that the true value equals the value of 0.8 and the Alternative hypothesis, which states that the true values is not equal the value of 0.8 can be viewed in Equation \ref{eq:nullacht}. Moreover, we define the test statistic in Equation \ref{eq:tstatmlone}.
+For our critical values we will use the conventional 1.96 from the normal distribution, as we assume that under a large sample size the maximum likelihood estimate is asymptotically normal distributed and therefore the test statistic under the nullhypothesis as well follows a normal distribution.
+The calculated t-statistic is \( t = 14.52 \), which is much greater than the critical value of \( t_{\text{crit}} = 1.96 \). Therefore, we  reject the null hypothesis \( H_0: \phi = 0.8 \) at the 5\% significance level.
+The result is underscored by the two sided p-value we calculated, which quantifies the probability of observing a test statistic as extreme as \( t = 14.4996 \), assuming \( H_0 \) is true.
+Since \( p < 0.05 \), we can reject the null hypothesis that the true value equals 0.8 at a 5 \% significance level. 
+\subsection{Increase sample size}
+To explore the key properties of Maximum Likelihood Estimators—efficiency, consistency, and asymptotic normality—we will first increase the sample size of the realization of the process. Subsequently, in a less conventional approach, we will keep the sample size constant but perform repeated simulations of the process. These simulations aim to provide deeper insights into the behavior of Maximum Likelihood Estimation, particularly the distribution of the parameter estimates across different realizations of the process.
+To assess the impact of an increased sample size, we will expand the sample size from 800 to 50,000 observations and repeat the parameter estimation using Maximum Likelihood. By re-estimating the parameters with Conditional Maximum Likelihood, constructing confidence intervals, and performing hypothesis tests, we aim to evaluate how a substantially larger sample size affects the precision of parameter estimates, the outcomes of hypothesis tests, and the computation of the covariance matrix.
+The parameter estimates obtained with T=50,000 observations are presented in Table~\ref{tab:optimization_large_sample}. Again for the estimation with the numerical optimization minimizing the negative likelihood we used the same starting values as for the first approach.
+The estimates clearly show how increasing the sample size improves both accuracy and precision of the paramter estimates, as evidenced by estimates closer to the true values for all four parameters.
+Furtheremore, Table~\ref{tab:confidence_intervals_large_sample} shows that across all parameters the standard erros decrease dramatically with the increase in the sample size, reflecting the improved precision.
+For instance: For c the standard error decreases from 0.40 to 0.05. 
+The covariance matrix as well shrinks consitently, indicating a reduced uncertainty in the parameter estimates as the sample size increases
+We moreover can observe how the negative log likelihood increases from 1386.5 (T=800) to 84,302 (T=50,000). 
+This increase is expected due to the larger sample size, as the log-likelihood scales with the number of observations.
+Additionally, it is visible how 95\% confidence intervalls shrank in comparison to the estimated parameters when the smaller sample size.
+Regarding the significance of our parameter estimates the results indicate that all our estimates fall within the resepective confidence intervalls underscoring that we could could not reject the nullhypothesis that our estimates equal the true value at least for 5 percent significance level.
+If we would again define the Nullhypothesis which is depicted in Equation  \ref{eq:nullacht}, whether the true values euqals the value of 0.8 or not, we will now have to change the test statistic to the test statistic shown in Equation \ref{eq:tstatmltwo}.
+As for the asymptotic normality property for our parameter estimate that is yielded by the Maximum likelihood estimation we again asume that our test statistic is asymptotically normal distributed. We therefore again use the critical value of 1.96 for a significance level of 5\.%
+As the value of our test statistic exceeds the critical value of 1.96 clearly we can reject the Nullhypothesis that the true value equals 0.8 for a significance level of 5\%.
+The increase of the sample size once again underlines the importnat properties that the maximum likelihood estimation technique yields when we correctly specify the likelihood function.These properties entail consistency, efficiency and asymptotic normality.
+ 
 
 
 
@@ -199,7 +220,26 @@ Whereas for the stationary alternative it is important to mention that $\alpha$ 
     \label{specifica}
 \end{itemize}
 
+\textbf{Hypothesis for estimated ML}
+\begin{equation}
+\begin{aligned}
+    H_0 &: \phi = 0.8 \, \ \\
+    H_1 &: \phi \neq 0.8 \,
+\end{aligned}
+\label{eq:nullacht}
+\end{equation}
 
+\textbf{Test Statistic}
+\begin{equation}
+t = \frac{0.9452 - 0.8}{0.0100} = \frac{0.1452}{0.0100} = 14.52.
+    \label{eq:tstatmlone}
+\end{equation}
+
+\textbf{Test Statistic improved}
+\begin{equation}
+t = \frac{0.95 - 0.8}{0.001} = \frac{0.15}{0.0100} = 150.
+    \label{eq:tstatmltwo}
+\end{equation}
 
 
 \newpage
@@ -271,6 +311,51 @@ $\nu$    & 3.4515 & 0.3471 & [2.7711, 4.1319] \\ \hline
 \label{tab:firstconfidence_intervals}
 \end{table}
 
+\textbf{Results after increasing sample size}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Optimization Results}              & \textbf{Values}                                                                 \\ \hline
+\textbf{Termination Criteria}              & OPTIONS.TolX = $1.0 \times 10^{-40}$, OPTIONS.TolFun = $1.0 \times 10^{-40}$     \\ \hline
+\textbf{Optimized Parameters}              & $\hat{c} = 1.9604$, $\hat{\phi} = 0.9511$, $\hat{\theta} = 0.2425$, $\hat{\nu} = 3.9719$ \\ \hline
+\textbf{Minimum Negative Log-Likelihood}   & $84302$                                                                         \\ \hline
+\textbf{Gradient at Optimum}               & $\begin{pmatrix}
+0.000018 \\
+-0.002526 \\
+0.0000 \\
+-0.00003
+\end{pmatrix}$                                                                  \\ \hline
+\textbf{Covariance Matrix of Estimates}    & $\begin{pmatrix}
+0.0023 & -0.0001 & 0.0000 & 0.0000 \\
+-0.0001 & 0.0000 & -0.0000 & -0.0000 \\
+0.0000 & -0.0000 & 0.0000 & -0.0000 \\
+0.0000 & -0.0000 & -0.0000 & 0.0030 \\
+\end{pmatrix}$                                                                \\ \hline
+\textbf{Exit Flag from fminsearch}         & 1 (Optimization successfully converged)                                         \\ \hline
+\end{tabular}
+\caption{Summary of optimization results with an increased sample size.}
+\label{tab:optimization_large_sample}
+\end{table}
+
+
+\textbf{Standard errors for optimized}
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|c|c|}
+\hline
+\textbf{Parameter} & \textbf{Estimate} & \textbf{Standard Error (SE)} & \textbf{95\% Confidence Interval (CI)} \\ \hline
+$c$     & 1.9604 & 0.0480 & [1.8663, 2.0545] \\ \hline
+$\phi$  & 0.9511 & 0.0012 & [0.9488, 0.9534] \\ \hline
+$\theta$ & 0.2425 & 0.0037 & [0.2352, 0.2498] \\ \hline
+$\nu$    & 3.9719 & 0.0548 & [3.8644, 4.0794] \\ \hline
+\end{tabular}
+\caption{Parameter estimates with standard errors and 95\% confidence intervals for the increased sample size.}
+\label{tab:confidence_intervals_large_sample}
+\end{table}
+
+
+
 
 
 
@@ -285,4 +370,11 @@ $\nu$    & 3.4515 & 0.3471 & [2.7711, 4.1319] \\ \hline
     \label{fig:armaone}
 \end{figure}
 
+
+\newpage
+\section{Notizen}
+\begin{itemize}
+    \item Does the $\phi$ parameter tell you something about the persistence of the process
+    \item Is the t test correctly interpreted?
+\end{itemize}
 \end{document}
