@@ -27,44 +27,46 @@
 
 \setstretch{1.2}
 \section{Introduction}
-Time series data are prevalent not only in traditional fields such as economics and finance but also in emerging areas like engineering and machine learning. 
-Analyzing and understanding the underlying process that generates time series data is critical for tasks such as forecasting or hypothesis testing.
-A key step in this analysis is the identification and application of appropriate models, with Autoregressive Moving Average (ARMA) models being particularly popular due to their effective combination of autoregressive and moving average components.
+Time series data appear in diverse fields, from economics and finance to engineering and machine learning. 
+Understanding the underlying process that generates the data is critical for tasks such as forecasting or hypothesis testing.
+A common approach in this analysis, involves the identification of appropiate models like Autoregressive Moving Average (ARMA), which effectively combine autoregressive and moving average components.
 However, a fundamental challenge arises from the fact that, in practice, we often observe only a single realization of the stochastic process. This limitation necessitates reliance on statistical properties like stationarity and ergodicity, which allow us to make meaningful inferences about the true data-generating process from the observed series.
-Once stationarity is established, the next crucial task is the estimation of parameters. Here Maximum Likelihood provides a rigorous framework for this purpose, offering desirable properties such as consistency and efficiency when the likelihood function is correctly specified. However, specifying the correct likelihood often requires substantial knowledge about the underlying process, which may not always be available. In such cases, quasi-maximum likelihood estimation (QMLE) serves as an alternative, allowing for approximate likelihood functions that can still yield valuable parameter estimates under broader conditions.
-In our paper, we aim to bridge the gap between theory and application.
-We will simulate a realization of a process whose true parameter specification follows an ARMA(1,1) model. Given the presence of stationarity, which we will later test using the Dickey-Fuller test, we will simulate two scenarios: one where the true likelihood function is defined (assuming we know the true distribution of the innovations) and one with a misspecified likelihood.
-We will begin by estimating the parameters through numerical optimization, minimizing the negative log-likelihood. For the scenario with the true likelihood, we will explore the impact of increasing the sample size on the precision of our estimates. Additionally, we will repeat the simulations for a fixed sample size to evaluate the confidence intervals of the estimated parameters.
-Finally, we will analyze the case of likelihood misspecification, examining how the parameter estimates are affected and identifying the properties of these estimates under misspecification.
+Once stationarity is established, parameter estimation becomes key. 
+Maximum Likelihood provides a rigorous framework, ensuring consistency and efficiency when the likelihood function is correctly specified. When full knowledge of the process is unavailable, quasi-maximum likelihood estimation (QMLE) offers a flexible alternative, which still yields valueable parameter estimates under broader conditions.
+In this paper, we aim to bridge the gap between theoretical concepts and practical applications in time series modeling.
+Specifically, we focus on the estimation of parameters in an ARMA(1,1) process, exploring both correctly specified and misspecified likelihood scenarios.
+Our analysis begins by simulating a stationary process, verified using the Dickey-Fuller test. We then examine two scenarios: one where the true likelihood function is correctly defined (assuming knowledge of the innovation distribution) and another where the likelihood is misspecified. Parameters will be estimated through numerical optimization by minimizing the negative log-likelihood.
+For the correctly specified likelihood, we want to investigate how the increase of the sample size influences the accuracy of the parameter estimates. Additionally, simulations with a fixed sample size will provide insights into the confidence intervals of the estimates.
+For case of likelihood misspecification, we assess how parameter estimates are impacted and examine their statistical properties. 
+Finally be repeating simulations for a fixed sample size and comparing results to the maximum likelihood framework, we aim to identify the limitations of the misspecification of the likelihood.
+
+
 \section{The true data generating Process}
-For the purpose of our analysis we will first introduce our true ARMA model which is an ARMA(1,1) model with the parameter specification that can be seen in Equation\eqref{eq:arma}.
-The innovation terms of our process $\epsilon_t$ will be t distributed, where we will define $\nu$ =4, meaning four degrees of freedom. Hence, the distribution of the innovations has heavier tails tails than the Gaussian distribution.\\
-As mentioned in Hamilton in order to assess whether the process is stationary or not one has to check the autoregressive especifically whether the autoregressive coefficient ($\phi$) is smaller then one in absolute terms. 
-As the autoregressive coefficient is smaller then one in absolute terms what can be seen, we can conclude that the true data generating process from whom we simulate the data is stationary.
-As our process is stationary, the coefficients our coefficients are absolutely summable and can define the process in a MA infinity representation which would yield after Hamilton Equation\eqref{eq:Mainf}.
+For the purpose of our analysis we will first introduce our true ARMA(1,1) model with the parameter specification that can be seen in Equation\eqref{eq:arma}.
+The innovation terms of our process $\epsilon_t$ will be t distributed, where we will define four degrees of freedom. Hence, the distribution of the innovations has heavier tails tails than the Gaussian distribution.\\
+As mentioned in Hamilton in order to assess whether the process is stationary or not one has to check  whether the autoregressive coefficient ($\phi$) is smaller then one in absolute terms. 
+As for our model the autoregressive coefficient is smaller then one in absolute terms, we can conclude that the true data generating process from whom we simulate the data is stationary.
+Hence stationarity holds, the coefficients our coefficients are absolutely summable and can define the process in a MA infinity representation which would yield after Hamilton Equation\eqref{eq:Mainf}.
 For simulation purpose we created a MATLAB function that simulates the data given the parameter values we defined in \eqref{eq:arma}.
-To create our data we simulated 800 observations, but due to dependencies in the first 50 observations we decided to discard the first 50 observations as burn in phase. Moreover, we set the starting values for our simulation equal to the expected value of the process which can be seen in Equation\eqref{eq:Mean}.
+To create our data we simulated 800 observations, but due to dependencies in the first observations we decided to discard the first 50 observations as burn in phase. Moreover, we set the starting values for our simulation equal to the expected value of the process which can be seen in Equation\eqref{eq:Mean}.
 
 \section{Dicky Fuller Test}
-From this point onward, we shift from the theoretical framework to a practical scenario where the underlying process generating the time series data is unknown. 
-This uncertainty poses challenges when attempting to extrapolate moments of the series to represent the true population moments.
-To address this and in order to later enable a meaningful parameter estimatuon with Maximum Likelihood, we first need to confirm the stationariyt of the process.
-Therefore, in this section we will conduct the Dickey-Fuller test, which evaluates whether the series contains a uni root.
+We now transition from theory to practice, addressing the challenges of working with an unknown data-generating process. To ensure meaningful parameter estimation using Maximum Likelihood, the first step is to verify the stationarity of the process.
+Therefore, in this section we will conduct the Dickey-Fuller test, which evaluates whether the series contains an uni root.
 A possible presence of a unit root would indicate non-stationarity and therefore, make it the realization unsuitable for the assumptions required in our subsequent analysis.
 To perform the Dickey-Fuller test, we first need to choose an appropriate case for our estimated model.
 This descision will be guided by a visual inspection of Figure~\ref{fig:armaone}., which will determine the most suitable test specification.
-\subsection{The case of the Dickey Fuller test}
-Figure~\ref{fig:armaone} clearly demonstrates that the series fluctuates randomly around a nonzero mean, which in this case is 40. This mean is highlighted by the red line in the plot.
-Given this observation we aim to choose a test specification that yields enough power to the stationary alternative i.e., its ability to reject a false null hypothesis.
+The Figure~\ref{fig:armaone} clearly demonstrates that the series fluctuates randomly around a nonzero mean, which in this case is 40. This mean is highlighted by the red line in the plot.
+It is important we mention that we aim to choose a test specification that yields enough power to the stationary alternative i.e., its ability to reject a false null hypothesis.
 The second case of the Dickey-Fuller test is most appropriate here because the alternative model in this case can account for a process with random fluctuations around a nonzero mean. \\
 If we were to choose the first case of the Dickey-Fuller test, it would assume the data fluctuates around a zero mean, which does not align with the observed behavior of our data.
  This mismatch would result in reduced power for the stationary alternative, making it less likely to detect stationarity when it exists.\\
 Similarly, the third and fourth cases can also be discarded. Case 3 is unsuitable because we do not observe a drift in the data, and Case 4 is not applicable as there is no discernible upward or downward trend. Selecting either of these cases would again fail to provide the stationary alternative with sufficient power to capture the true behavior of the process.\\
 Thus, based on these considerations, the second case of the Dickey-Fuller test aligns perfectly with the characteristics of the data as shown in the plot.\\
-For the second case of the Dickey-Fuller test, we will first consider the model specified under the null hypothesis, as shown in \eqref{eq:true}, and the corresponding alternative hypothesis model, depicted in \eqref{eq:alternative}. Based on the data, we will estimate the alternative model outlined in \eqref{eq:alternative}, which is appropriate for this test case.
+For the second case of the Dickey-Fuller test, now consider the model specified under the null hypothesis, as shown in \eqref{eq:true}, and the corresponding alternative hypothesis model, depicted in \eqref{eq:alternative}. Based on the data, we will estimate the model outlined in \eqref{eq:alternative}, which is appropriate for this test case.
 Using Ordinary Least Squares (OLS), we estimate the parameters $\hat{\alpha}, \hat{\rho}$ obtaining $\hat{\rho} = 0.96$ and $\hat{\alpha}$ = 1.46. The corresponding standard errors are $s.e.(\hat{\rho})$=0.01 and 
 $s.e.(\hat{\alpha})$ = 0.4, providing insight into the precision of these estimates.
-If we would compare the  paramter estimates with our true parameter values in the second equation, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. On the other hand the value for the constant $\alpha$ differs more noticeably from the true intercept. This is moreover underscored by the standard errors.
+Comparing the estimates with our true parameter values in the second equation, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. On the other hand the value for the constant $\alpha$ differs more noticeably from the true intercept. This is moreover underscored by the standard errors.
 \subsubsection{Test statistic}
 We will now  test for an unit root in $y_t$ using the second case of the Dicky Fuller test. 
 We therefore define our Nullhypothesis and alternative hypothesis in Equation\eqref{eq:dftest}.
@@ -72,89 +74,89 @@ To test whether the series entails an unit root or not the complete test statist
 It is important to mention that the Test statistic under the Null is not normally distributed as we are now in the case where we asumme an unit root. Nevertheless, we know that the distribution of the test statistic under the null is nonstandard but as well nuisance parameter free. For our critical values we now cannot use the conventional 1.96 from the normal distribution. Instead we will compare it  against the critical values of the from the Dicky Fuller table.
 For over 500 observations, a zero trend case, and a 5\% significance level, the critical value is approximately -2.86.
 The resulting value of our test statistic is -3.66 and therfore is less then -2.86, and therefore we do not fail to reject the nullhypothesis of an unit root for the significance level of 5 percent.\\
- Having confirmed that the process does not contain a unit root, we will proceed to estimate its parameters using Maximum Likelihood (ML). Initially, we will assume that the correct density is specified, and subsequently, we will explore the effects of misspecifying the density.
+ Having confirmed that the process does not contain a unit root, we will proceed to estimate its parameters using Maximum Likelihood (ML). 
 
 \section{Maximum Likelihood estimation}
 For the parameter estimation, we will now employ Maximum Likelihood, specifically Conditional Maximum Likelihood (CMLE). 
 Unlike exact Maximum Likelihood, CMLE assumes the first observation, $y_1$, is deterministic and maximizes the likelihood conditioned on this initial value see Hamilton p(122).
 This approach is computationally efficient, as noted by Hamilton (p. 123), and under the assumption of a large sample size, the first observation makes a negligible contribution to the total likelihood. 
 Given the stationarity condition $\phi < 1$ (proven in the previous section), the Maximum Likelihood Estimators (MLE) and Conditional Maximum Likelihood Estimators (CMLE) share the same large-sample distribution.\\
-In order to get the maximum likelihood estimates this paper will follow two steps. First we will propose two distinct parameter specifications and compare their respective log-likelihood values. This comparison allows us to determine which specification offers a better fit to the data, thereby providing insights into the underlying dynamics of the process.
-Afterwards we will try to estimate the paramters by numerical search which in this context will be minimizing the log likelihood.
+In order to get the maximum likelihood estimates this paper will follow two steps. First we will propose two distinct parameter specifications and compare their respective log-likelihood values. This comparison allows us to determine which specification offers a better fit to the data.
+Afterwards we will try to estimate the paramters by numerical search.
  \subsection{Estimate the Likelihood}
-In order to implement our first approach, we compute the conditional log-likelihood contributions for each time step. Therefore we have to construct the likelihood function specifyng the underlying densities for each observation. 
+To implement our approach, we compute the conditional log-likelihood contributions for each time step by constructing the likelihood function based on the specified densities. 
 Assuming we are in a situation where we correctly specify our densities knowing that the innovations of the process follow a t distribution our conditional log likelihood contributions can be seen in Equation \eqref{eq:clc}.
-To stabilize the maximization process, we work with the log of the densities rather than the densities themselves. This transformation allows us to sum the log-densities instead of multiplying the densities, improving numerical stability.
-The total conditional log likelihood is then obtained by summing these contributions over all time steps, as it can be seen in Equation \eqref{eq:tcl}.
-In the following analysis, we will use two parameter specifications to compute the conditional likelihood. First, we will calculate the conditional log-likelihood for the true parameters that generated the series. We will then compare this value to the log-likelihood obtained using an alternative parameter specification. The two parameter specifications are presented in \ref{specifica}. The results are displayed in Table~\ref{tab:log_likelihood_results}.
+For numerical stability, we work with log-densities, summing them instead of multiplying densities. 
+The total conditional log likelihood is then obtained by summing these contributions over all time steps, as shown in Equation \eqref{eq:tcl}.
+In the following analysis, we will define two parameter specifications so that the joint density is maximized.
+First, we will calculate the conditional log-likelihood for the true parameters that generated the series. 
+We will then compare this value to the log-likelihood obtained using an alternative parameter specification. The two parameter specifications are presented in \ref{specifica}. The results are displayed in Table~\ref{tab:log_likelihood_results}.
 It can clearly be seen, that the conditional log-likelihood value for Case (a) (the true parameter specification) is notably higher (less negative) than that for Case (b). This indicates that the true parameters provide a better fit to the observed series compared to the alternative specification.
 In the context of log-likelihood, higher (or less negative) values indicate greater probability density for the observed data, suggesting that the specified parameters are more likely to have generated the series.
 The deviations in the AR and MA coefficients, as well as the degree of freedom parameter $\nu$, result in a suboptimal representation of the data-generating process. 
-This discrepancy underscores the sensitivity of CMLE when it comes to parameter specification.
-By explicitly accounting for the heavy-tailed $t$-distributed innovations, CMLE effectively distinguishes between parameter sets and favors those that align closely with the true data-generating process.
+The results underscore how CMLE effectively distinguishes between parameter sets and favors those that align closely with the true data-generating process.
 
 \subsection{Estimate the parameters using numerical minimization}
-In order to estimate the parameters $c, \phi, \theta,\nu$ we will be minimizing the negative log-likelihood. We therefore adopt a numerical optimization approach. It is worth noting that these two approaches are mathematically equivalent, as minimizing the negative of a function is the same as maximizing the original function. This equivalence stems from the monotonic nature of the negative operation, which preserves the order of the optimization objective.
+In order to estimate the parameters $c, \phi, \theta,\nu$ we will be minimizing the negative log-likelihood. We therefore adopt a numerical optimization approach. It is worth noting that these two approaches are mathematically equivalent, as minimizing the negative of a function is the same as maximizing the original function.
 To adapt our method, we refine the log-likelihood function introduced earlier Equation \eqref{eq:tcl} to return its negative value.
-We convert that in order to ensure compatibility with standard numerical optimization algorithms, which are designed to find the minimum of an objective function.
-In order to minimze the negative of the function we used the 'fminsearch' algorithm from MATLAB which is also known as derivate free optimization. 
+In order to minimze the negative of the function we used the 'fminsearch' algorithm from MATLAB which is also known as derivate free optimization  and designed to find the minimum of an objective function. 
 We moreover, specified a Hessian-based covariance matrix to quantify parameter uncertainty and initialized the estimation procedure with the following values c = 1.5, $\phi$ = 0.75, $\theta$ = 0.5, $\nu$ = 5.
-The results of the numerical optimization can be found in Table~\ref{tab:optimization_results}. Our results indicate that the Conditional Maximum Likelihood Estimation (CMLE) approach successfully estimated the parameters of the ARMA(1,1) process.
-The estimated values for \(c\), \(\phi\), \(\theta\), and \(\nu\) are close to their true values, demonstrating the accuracy of the method.
+The results of the numerical optimization can be found in Table~\ref{tab:optimization_results}. Our estimated values for \(c\), \(\phi\), \(\theta\), and \(\nu\) are close to their true values, demonstrating the accuracy of the method.
 The constant term  \(\hat{c} = 2.2456\), closely approximates the true value of \(c = 2\),  while the autoregressive coefficient  \(\hat{\phi} = 0.9446\) is near the true \(\phi = 0.95\), effectively capturing the process's dependency structure. Similarly, the moving average coefficient \(\hat{\theta} = 0.2834\) aligns well with the true \(\theta = 0.25\). Finally, the estimated degrees of freedom for the \(t\)-distributed innovations \(\hat{\nu} = 3.4515\) closely reflect the true \(\nu = 4\), indicating the model's ability to capture the heavy-tailed nature of the errors.
-The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. Furtheremore, the minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates, while the small gradient magnitude at the optimum (\(\|\nabla \hat{L}_{\text{neg}}\| \approx 10^{-5}\)). It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
+The standard errors derived from the Hessian-based covariance matrix indicate reasonable precision for all parameter estimates, with relatively small variances. Furtheremore, the minimized negative log-likelihood value of 1386.5 confirms the plausibility of the parameter estimates. It is worth noting that the minimized negative log-likelihood value of 1386.5 is slightly better than the positive log-likelihood value of the true parameter process, which was \(-1388.32\). This small improvement could arise due to the flexibility of the numerical optimization in finding parameter estimates that fit the observed realization of the series slightly better than the true population parameters. This phenomenon is possible because the observed data is a finite realization of the process, and the optimization procedure tailors the estimates specifically to this realization, potentially compensating for random variations in the sample.
 
 \subsection{Confidence intervalls}
 To further assess the precision of our computed estimates we constructed the 95\% confidence intervals.
-The intervals are essential providing the range within which the true parameter values are likeli to lie, given the data.
+The intervals are essential providing the range within which the true parameter values are likelie to lie, given the data.
 For values within the confidence interval, we fail to reject the null hypothesis at the 5\% significance level, that these values equal the true values of the parameters.
 As the Maximum Likelihood estimation of the parameter yields asymptotic normality we will use the conventional quantiles of the normal distribution when computing the 95\% confidence intervals.
 The results for our confidence intervals are displayed in Table~\ref{tab:firstconfidence_intervals}.
 The results indicate that all our estimates fall within the resepective 95\% confidence intervalls highlighting that we could not reject the nullhypothesis that our estimates equal the true value at least for a 5 percent significance level.
 Nevertheless, we want to emphasize on the fact the the intervals especially for our parameters $c \, \text{and} \, \nu$ are relatively wide compared to those of the other parameters, indicating higher uncertainty in the estimate.
-Overall, the results underline the statistical significance of our estimates and therefore also highlight one of the properties of Maximum Likelihood which is the consistency of our estimates.
+Overall, the results underline the statistical significance of our estimates.
 \subsection{T-test}
 Building on the insights gained from the confidence intervals, we now turn to hypothesis testing.
-Specifically, we aim to test whether the autoregressive coefficient $\phi$ differs significantly from the hypothesized value of 0.8.
+Specifically, we aim to test whether the true autoregressive coefficient $\phi$ differs significantly from a hypothesized value of 0.8.
 Using the t-test and a significance level of 5\%, we aim to evaluate whether the data provides sufficient evidence to reject this hypothesis.
 The Nullhypothesis that claims that the true value equals the value of 0.8 and the Alternative hypothesis, which states that the true values is not equal the value of 0.8 can be viewed in Equation \ref{eq:nullacht}. Moreover, we define the test statistic in Equation \ref{eq:tstatmlone}.
 For our critical values we will use the conventional 1.96 from the normal distribution, as we assume that under a large sample size the maximum likelihood estimate is asymptotically normal distributed and therefore the test statistic under the nullhypothesis as well follows a normal distribution.
 The calculated t-statistic is \( t = 14.52 \), which is much greater than the critical value of \( t_{\text{crit}} = 1.96 \). Therefore, we  reject the null hypothesis \( H_0: \phi = 0.8 \) at the 5\% significance level.
 The result is underscored by the two sided p-value we calculated, which quantifies the probability of observing a test statistic as extreme as \( t = 14.4996 \), assuming \( H_0 \) is true.
 Since \( p < 0.05 \), we can reject the null hypothesis that the true value equals 0.8 at a 5 \% significance level. 
+
+
 \subsection{Increase sample size}
-To explore the key properties of Maximum Likelihood Estimators—efficiency, consistency, and asymptotic normality—we will first increase the sample size of the realization of the process. Subsequently, in a less conventional approach, we will keep the sample size constant but perform repeated simulations of the process. These simulations aim to provide deeper insights into the behavior of Maximum Likelihood Estimation, particularly the distribution of the parameter estimates across different realizations of the process.
-To assess the impact of an increased sample size, we will expand the sample size from 800 to 50,000 observations and repeat the parameter estimation using Maximum Likelihood. By re-estimating the parameters with Conditional Maximum Likelihood, constructing confidence intervals, and performing hypothesis tests, we aim to evaluate how a substantially larger sample size affects the precision of parameter estimates, the outcomes of hypothesis tests, and the computation of the covariance matrix.
+To explore the key properties of Maximum Likelihood Estimators, we will now increase the sample size of the realization of the process. 
+Therefore we will expand the sample size from 800 to 50,000 observations and repeat the parameter estimation using Maximum Likelihood. By re-estimating the parameters with Conditional Maximum Likelihood, constructing confidence intervals, and performing hypothesis tests, we aim to evaluate how a substantially larger sample size affects the precision of parameter estimates, the outcomes of hypothesis tests, and the computation of the covariance matrix.
 The parameter estimates obtained with T=50,000 observations are presented in Table~\ref{tab:optimization_large_sample}. Again for the estimation with the numerical optimization minimizing the negative likelihood we used the same starting values as for the first approach.
-The estimates clearly show how increasing the sample size improves both accuracy and precision of the paramter estimates, as evidenced by estimates closer to the true values for all four parameters.
+The estimates clearly show how increasing the sample size improves both accuracy of the paramter estimates, as evidenced by estimates closer to the true values for all four parameters.
+We therefore can conclude that our estimates converge in probability towards the true values as the sample goes bigger and bigger
 Furtheremore, Table~\ref{tab:confidence_intervals_large_sample} shows that across all parameters the standard erros decrease dramatically with the increase in the sample size, reflecting the improved precision.
-For instance: For c the standard error decreases from 0.40 to 0.05. 
-The covariance matrix as well shrinks consitently, indicating a reduced uncertainty in the parameter estimates as the sample size increases
+For instance: For c the standard error decreases from 0.40 to 0.05. This will also cause the 95\% confidence intervalls to shrink
+The covariance matrix as well shrinks consitently, indicating a reduced uncertainty in the parameter estimates as the sample size increases.
+This underscores the efficiency property that we gain with Maximum Likelihood as the sample size goes bigger and bigger.
 We moreover can observe how the negative log likelihood increases from 1386.5 (T=800) to 84,302 (T=50,000). 
 This increase is expected due to the larger sample size, as the log-likelihood scales with the number of observations.
-Additionally, it is visible how 95\% confidence intervalls shrank in comparison to the estimated parameters when the smaller sample size.
-Regarding the significance of our parameter estimates the results indicate that all our estimates fall within the resepective confidence intervalls underscoring that we could could not reject the nullhypothesis that our estimates equal the true value at least for 5 percent significance level.
+Regarding the significance of our parameter estimates the results indicate that all our estimates fall within the resepective confidence intervalls underscoring that we could could not reject the nullhypothesis that our estimates equal the true value at a 5 percent significance level.
 If we would again define the Nullhypothesis which is depicted in Equation  \ref{eq:nullacht}, whether the true values euqals the value of 0.8 or not, we will now have to change the test statistic to the test statistic shown in Equation \ref{eq:tstatmltwo}.
 As for the asymptotic normality property for our parameter estimate that is yielded by the Maximum likelihood estimation we again asume that our test statistic is asymptotically normal distributed. We therefore again use the critical value of 1.96 for a significance level of 5\.%
 As the value of our test statistic exceeds the critical value of 1.96 clearly we can reject the Nullhypothesis that the true value equals 0.8 for a significance level of 5\%.
-The increase of the sample size once again underlines the importnat properties that the maximum likelihood estimation technique yields when we correctly specify the likelihood function.These properties entail consistency, efficiency and asymptotic normality.
+Therefore the increase of the sample size has showns the important estimation properties of MLE, that entail consistency, efficiency and asymptotic normality.
+
+
 \subsection{Simulate various realizations of the process.}
 An alternative approach to estimating the parameters of a stochastic process involves simulating multiple realizations of the process, each of the same length. 
 While this method is typically not feasible in real-world applications—where only a single realization of the process is observed—it provides valuable insights in a theoretical scenario. Specifically, by assuming we know the true parameter values of the process, we can simulate independent realizations to explore how Maximum Likelihood Estimates (MLEs) vary around the true parameters.
 To approximate the variability of the MLE for a given sample size, we simulate 2,500 realizations of the process. For each realization, we estimate the parameter values using MLE. This exercise allows us to study the distribution of the parameter estimates and with that gain a deeper understanding of the estimator's finite-sample properties.
-To analyze the results of our 2,500 simulated estimates, we present visualizations using kernel density plots for the parameter estimates  $c, \phi,\theta$.
-Kernel density plots offer a smooth and continuous representation of the distribution of these estimates, helping to illustrate their variability and central tendencies.
-The first plot which displays the estimation of the intercept term $c$ estimates across 2500 realizations.The density is clearly centered around the true value of 2, with a slight spread indicating some variability. Nevertheless, the distribution is tightly clustered, confirming that the estimates consistently hover near the true value.
-The second plot depicts the distribution of estimates for $\phi$. This distribution is sharply peaked around the true value of 0.95 with minimal variance, highlighting the high precision of the MLE for this parameter. The narrow spread underscores that the vast majority of estimates lie very close to 0.95.
-Finally for the $\theta$ estimate we again see that the density is tightly centered near the true $\theta$ value of 0.25. It indicates that the MLE effectively recovers the true parameter values for $\theta$ as well.
-To further assess the performance of the estimators, we constructed 95\% confidence intervals for each parameter and evaluated their coverage probabilities—i.e., the proportion of intervals that capture the true parameter value.The results, shown in Table 11, reveal that the coverage for 
+To assess the performance of the estimators, we constructed 95\% confidence intervals for each parameter and evaluated their coverage probabilities—i.e., the proportion of intervals that capture the true parameter value.The results, shown in Table 11, reveal that the coverage for 
 c (94.72\%) and $\phi$ (95.01\%) are very close to the nominal 95\% level, aligning with the patterns observed in the kernel density plots. 
 For $\theta$ the coverage is slightly lower at 94.28\%, and for the $\nu$ parameter the coverage slightly exceeds the nominal 95\% level.
 The coverage results confirm that the confidence intervls cocnstructed using the ML estimates and their standard errors are well calibrated with proportions close to the nominal 95\% level.
 The results clearly demonstrate that MLE yields parameter estimates that are close to the true values across different realizations of the process. This provides valuable insights into the reliability and variability of MLE in finite-sample settings.
+We later will be comparing these results with 2500 parameter estimates of the Quasi Maximum Likelihood framework visualizing them using kernel density plots. We hope that these simulations provide deeper insights into the behavior of MLE and QMLE particularly the distribution of the parameter estimates across different realizations of the process.
 
 
-\section{Conditional Maximum Likelihood}
+\section{Qausi Maximum Likelihood}
 A very important condition in order to perform a Maximum Likelihood estimation is we have enough information to correctly specify our densities and the likelihood function.
 It is common in practice that we don't know the underlying distribution of the stochastic process.
 This challenges the correct specification of the conditional densities and sometimes result in the misspecification of the conditional density function.
@@ -162,27 +164,47 @@ This missspecification has implications for our parameter estimates: while some 
 In the case of such a misspecification we transition from the framework of 
 Maximum Likelihood Estimation (MLE) to Quasi-Maximum Likelihood Estimation (QMLE).
 In the following, we deliberately assume an incorrect conditional density by selecting a Gaussian distribution for the innovations, even though the true underlying innovations are \( t \)-distributed.
-As for this misspecification we need to ocnstruct a new log likelihood function which depicted in Equation \ref{eq:QML}.
-Given the misspecification using conditional Maximum Likelihood for estimation will still yield some properties, such as consistency for parameters such as c,$\phi$ and $\theta$. Moreover for a large sample size our estimate $\phi$ will be asymptotically normal distributed.
-Nevertheless due to the misspecification of the innovation terms we will loose our efficiency property in this framework.
+As for this misspecification we need to construct a new log likelihood function which depicted in Equation \ref{eq:QML}.
+Given the misspecification using Quasi Maximum Likelihood for estimation can nevertheless still yield us some properties, such as consistency for parameters such as c,$\phi$ and $\theta$. Moreover for a large samples we will also retain the asymptotic normality property.
+Nevertheless due to the misspecification of the innovation terms we will loose our efficiency property in this framework, this will affect our standard errors and confidence intervalls as we later will see.
 We will now again use MATLABS numerical optimization techniques in order to minimize the negative sum of the condtional log likelihood.
 We therefore define the following starting values c = 1.5, $\phi$ = 0.75, $\theta$ = 0.5, $\sigma^2$ = 1.
 The QML estimation results are presented in Table~\ref{tab:qml_results}.
 Our estimated parameter values indicate that some estimated parameter values such as the one for the  $\phi$ remain precise as it is close to the true parameter value of 0.95. On the other hand the parameter value estimates c or $\theta$ sligthly vary from the true parameter values.
 c for instance is slightly underestimated compared to the true value and $\theta$ is clearly overestimated.
-The estimate for the fourth parameter now represents teh variance instead of the degrees of freedom due to the fact that we false assume a normal distribution for the innovations.
+The estimate for the fourth parameter now represents the variance instead of the degrees of freedom due to the fact that we false assume a normal distribution for the innovations.
 The negative log-likelihood at the optimum is 1434.4236, higher than the 1386.5 under the correct t-distribution.
 This reflects the poorer fit of the Gaussian assumption compared to the true t-distribution.
-When we now report the standard erros for our estimated parameters that we get by square of the main diagonal of the variance covariance matrix we see that we get a relatively precise estimate for $\phi$ but higher uncertainty for c , $\theta$ and $\nu$.
-Overall the standard erros of the Quasi Maximum Likelihood estimation are generally larger than the conditional Maximum Likelihood standard errors. This loss seems to be consistent due to the misspecification.
-The 95\% confidence intervalls provide us with a range for which we can not reject the nullhypothesis that these values equal the true value at least for a 5\% significance level.
-As we assume that for a large sample our estimate $\phi$ follows an asymptotically normal distribution we will use the quantiles of the normal distribution to construct the confidence intervalls.
+When we now report the standard erros for our estimated parameters that we  see that we get a relatively precise estimate for $\phi$ but higher uncertainty for c , $\theta$ and $\nu$.
+Overall the standard erros of the Quasi Maximum Likelihood estimation are generally larger than the conditional Maximum Likelihood standard errors, which is a cause of the loss of efficiency. 
+The 95\% confidence intervalls provide us with the range for which we can not reject the nullhypothesis that our estimates equal the true value for a 5\% significance level.
+As we assume asymptotic normality we will use the quantiles of the normal distribution to construct the confidence intervalls.
 The 95\% confidence intervals for the QML estimates are wider than those for the ML estimates, reflecting reduced precision.
-However the confidence intervals for our three parameters $c, \phi, \theta$ all include the true value of process and we therefore cannot reject the nullhypothesis that the true our estimate equals the true value for a significance level of 5\%.
+However the confidence intervals for our three parameters $c, \phi, \theta$ all include the true value of process and we therefore cannot reject the nullhypothesis that 
+our estimate equals the true value for a significance level of 5\%.
 So even though we lack of precision in comparison to the Maximum Likelihood framework we still can claim consistency for our estimates.
-\subsection{Simulate Realizations of the process}
-Finally we will again simulate different realizations of the process as we have done in task 4.2 and will now again estimate the first three parameters repeatidly for each realization of the process with Quasi Maximum Likelihood. In again this theoretical scenario we want to plot the distribution of the estimates against the distribution of the estimates under Maximum Likelihood and then assess how the estimates vary around the true parameters.
 
+
+
+\subsection{A comparison between various simulations of the process}
+Finally we aim to compare the 2,500 parameter estimates derived from the conditional maximum likelihood and quasi-maximum likelihood frameworks.
+For this theoretical scenario, we will plot the distribution of estimates obtained through conditional maximum likelihood alongside those derived under quasi-maximum likelihood. This comparison will highlight how the estimates vary around the true parameter values. Repeated estimation will provide insights into the effects of density misspecification on the quasi-maximum likelihood framework and its impact on the estimates compared to the correctly specified densities.
+For the results of our estimates we will provide the visualizations in Figure\ref{fig:repeated} where we display the kernel density plots for the parameter estimates for $c, \phi,\theta$ for both QML and ML.
+The first subplot displays the estimation of the intercept term $c$ over 2500 realizations using the ML and QML frameworks. 
+It clearly shows how the ML density (blue) is centered slightly closer to the true value of c=2 compared to the QML density (red). 
+Moreover, the red density shows a greater spread , reflecting increased variability due to the misspecified Gaussian assumption.
+Therefore it is to see, that for the 2500 simulations the ML estimation provides a more precise and accurate estimate of c then the QML framework.
+The second plot shows the estimation of the $\phi$ term. 
+Here both ML and QML densities are tightly centered near $\phi$ = 0.95. The spread of QML estimates is marginally wider, showing a slight loss of efficiency compared to ML. Nevertheless as we already saw it in the estimation of the one realization the $\phi$ term is robust to misspecification as both ML and QML yielding highly accurate estimates.
+Finally for the $\theta$ estimate we again see that both densities are tightly centered near the $\theta$ = 0.25. The ML density is slightly more peaked and centered closer to the true value compared to the QML density. The QML density is more spread out, indicating greater variability under the misspecified Gaussian assumption.
+For all the three paramters the ML estimates provide more precise estimates.
+The results therefore, underscore the loss of efficiency when misspecifying the condtional densities when using the Quasi Maximum Likelihood framework, nevertheless we are still able to get close estimates for parameters like $\phi$ as we carefully specify the densities.
+
+
+
+
+\section{Conclusion}
+( These simulations aim to provide deeper insights into the behavior of Maximum Likelihood Estimation, particularly the distribution of the parameter estimates across different realizations of the process.)
 
 
 
@@ -464,6 +486,14 @@ $\sigma^2$ & 2.1227 & 0.1624 & [1.8043, 2.4410] \\ \hline
     \includegraphics[width=1.2\textwidth]{fina/arma_useone.jpg} 
     \caption{The Simulated ARMA(1,1)}
     \label{fig:armaone}
+\end{figure}
+
+\textbf{The figure for repeated simulations}
+ \begin{figure}[h!]
+    \centering
+    \includegraphics[width=1.2\textwidth]{fina/mlandqml.jpg} 
+    \caption{The Simulated ARMA(1,1)}
+    \label{fig:repeated}
 \end{figure}
 
 
