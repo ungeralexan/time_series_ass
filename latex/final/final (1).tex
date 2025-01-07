@@ -57,9 +57,11 @@ If we were to choose the first case of the Dickey-Fuller test, it would assume t
  This mismatch would result in reduced power for the stationary alternative, making it less likely to detect stationarity when it exists.\\
 Similarly, the third and fourth cases can also be discarded. Case 3 is unsuitable because we do not observe a drift in the data, and Case 4 is not applicable as there is no discernible upward or downward trend. Selecting either of these cases would again fail to provide the stationary alternative with sufficient power to capture the true behavior of the process.\\
 Thus, based on these considerations, the second case of the Dickey-Fuller test aligns with the characteristics of the data as shown in the plot.\\
-For the second case of the Dickey-Fuller test, now consider the model specified under the null hypothesis, as shown in \eqref{eq:true}, and the corresponding alternative hypothesis model, depicted in \eqref{eq:alternative}. Based on the data, we will estimate the model outlined in \eqref{eq:alternative}, which is appropriate for this test case.
+For the second case of the Dickey-Fuller test we will estimate the model outlined in Equation \eqref{eq:alternative}.
 Using Ordinary Least Squares (OLS), we estimate the parameters, obtaining $\hat{\rho} = 0.96$ and $\hat{\alpha}$ = 1.46. 
-Comparing the estimates with our true parameter values in the second equation, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. 
+Comparing the estimates with our true parameter values especially the value of $\hat{\rho}$ with the true parameter $\phi$, we see that the paramter ($\hat{\rho}$) is very close to the true parameter of $\phi$. 
+
+
 \subsubsection{Test statistic}
 We will now  test for an unit root in $y_t$ using the second case of the Dicky Fuller test. 
 We therefore define our Nullhypothesis and alternative hypothesis in Equation\eqref{eq:dftest}.
