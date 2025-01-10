@@ -6,7 +6,9 @@
 % **Submission Date:** December 12th, 2025
 
 %%
-%% First, activating the folder path
+%% We begin by activating the folder path
+% We contructed this statement to check folder path and to update it to be
+% able to run the script
 if isdeployed
     scriptFolder = ctfroot; 
 else
@@ -35,7 +37,7 @@ function yt = ARMA_simulator(T, c, phi, theta, nu, y0)
     end
 end
 
-%%% Task 1.2: We will now simulate the process
+%% Task 1.2: We will now simulate the process
 % Parameters
 c = 2;              
 phi = 0.95;         
@@ -56,7 +58,10 @@ series = ARMA_simulator(T, c, phi, theta, nu, y0);
 % We remove burn-in phase
 y = series((burn_in + 1):end);
 
-%%% Task 1.3: Here we visualize the simulated ARMA(1,1) process
+% We here store the series in order to come back at it in task 5
+ysafe = y;
+
+%% Task 1.3: Here we visualize the simulated ARMA(1,1) process
 figure; 
 hold on; 
 plot(1:(T - burn_in), y, 'LineWidth', 1.5, 'Color', [0 0.4470 0.7410]);
@@ -73,7 +78,7 @@ set(gca, 'FontSize', 12, 'Box', 'on');
 hold off;
 %% Task 2: Unit Root Tests
 
-%%% Task 2.2: We estimate the series with OLS
+% Task 2.2: We estimate the series with OLS
 
 % Response Variable
 yt = y(2:end);
@@ -112,7 +117,7 @@ disp(['φ (AR parameter): ', num2str(b(2))]);
 disp('Standard Errors (s.e.):');
 disp(['s.e.(c): ', num2str(s_error_alpha)]); 
 disp(['s.e.(φ): ', num2str(s_error_rho)]);
-%%% Task 2.3: Next we perform Dickey-Fuller test
+%% Task 2.3: Next we perform Dickey-Fuller test
 
 % We calculate t-statistic
 phi_hat = b(2);         
@@ -123,15 +128,15 @@ disp(['t-statistic: ', num2str(t_stat)]);
 critical_value = -2.86; 
 
 if t_stat < critical_value
-    disp('Reject the null hypothesis (H0: φ = 1). The series is stationary.');
+    disp('We reject the null hypothesis (H0: φ = 1). The series is stationary.');
 else
-    disp('Fail to reject the null hypothesis (H0: φ = 1). The series is non-stationary.');
+    disp('We fail to reject the null hypothesis (H0: φ = 1). The series is non-stationary.');
 end
 %% Task 3: Constructing the Conditional Log Likelihood
 
-%%% Helper functions for Task 3
+% Helper functions for Task 3
 
-% 1st helper function: loglikelihood contributions
+% 1st helper function: logL_contributions (we construct the log-likelihood contributions)
 function logL_contributions = ml_contributions(params, y)
     % We first extract parameters
     c = params(1);
@@ -161,14 +166,14 @@ function logL_contributions = ml_contributions(params, y)
     end
 end
 
-% 2nd helper function: loglikelihood
+% 2nd helper function: loglikelihood (here we construct the log-likelihood)
 function total_logL = loglikelihood(params, y)
     logL_contributions = ml_contributions(params, y);
 
     % Total log likelihood: summing the contributions
     total_logL = sum(logL_contributions);
 end
-
+%% Task 3.2
 % Case (a) parameters
 params_a = [2; 0.95; 0.25; 4];
 
@@ -184,16 +189,18 @@ total_logL_b = loglikelihood(params_b, y);
 
 disp(['Total conditional log likelihood for case b): ', num2str(total_logL_b)]);
 %% Task 4: Parameter Estimation with Maximum Likelihood
-
-% Helper function for task 4, which computes the negative total conditional log likelihood for ARMA(1,1)
+% Task 4.1
+% Helper function neg_loglikelihood for task 4, which computes the negative total conditional log likelihood for ARMA(1,1)
 function negLogL = neg_loglikelihood(params, y)
     logL_contributions = ml_contributions(params, y);
     negLogL = -sum(logL_contributions);
 end
 
 % CML toolbox
+% For different system change '\' to '/'
 addpath('CML\CML');
 
+%% Task 4.2
 % Starting values
 x0 = [1.5; 0.75; 0.5; 5];
 
@@ -223,6 +230,7 @@ disp(['Exit flag from fminsearch = ', num2str(retcode)]);
 paramEst = x;      
 covEst = cov;      
 
+%% Task 4.3
 % Next we compute standard errors
 SE = sqrt(diag(covEst));
 
@@ -237,7 +245,7 @@ for i = 1:length(paramEst)
     fprintf('%s: Estimate = %.4f, SE = %.4f, CI = [%.4f, %.4f]\n', ...
         paramNames{i}, paramEst(i), SE(i), CI_lower(i), CI_upper(i));
 end
-%%% Task 4.4: Perform t-test for H0: φ = 0.8
+%% Task 4.4: Perform t-test for H0: φ = 0.8
 % We test the null hypothesis H0: φ = 0.8 at a 5% significance level (two-sided test)
 phiEst = paramEst(2); 
 phiSE = SE(2);        
@@ -257,7 +265,8 @@ if abs(tStat) > critVal
 else
     fprintf('   => Fail to reject H0 at the 5%% level.\n\n');
 end
-%%% Task 4.5: computing two-Sided p-value
+
+%% Task 4.5: computing two-Sided p-value
 pValue = 2 * (1 - normcdf(abs(tStat))); 
 fprintf('Test statistic for H0: phi = 0.8 is tStat = %.4f\n', tStat);
 fprintf('Two-sided p-value = %.6f\n', pValue);
@@ -266,7 +275,8 @@ if pValue < 0.05
 else
     fprintf('=> p-value >= 0.05 => Fail to reject H0 at 5%% level.\n\n');
 end
-%%% Task 4.6: here we simulate a longer ARMA(1,1) series (T = 50,000) and re-estimate parameters
+
+%% Task 4.6: here we simulate a longer ARMA(1,1) series (T = 50,000) and re-estimate parameters
 
 % Parameters
 c = 2;              
@@ -300,7 +310,8 @@ disp('Covariance matrix of estimates = ');
 disp(cov);
 
 disp(['Exit flag from fminsearch = ', num2str(retcode)]);
-%%% We construct confidence intervals for new estimates
+
+% We construct confidence intervals for new estimates
 paramEst = x;      
 covEst = cov;      
 SE = sqrt(diag(covEst)); 
@@ -313,7 +324,7 @@ for i = 1:length(paramEst)
         paramNames{i}, paramEst(i), SE(i), CI_lower(i), CI_upper(i));
 end
 
-%% Lets perform our two sided t-test for H0: phi = 0.8 at 5% significance
+% Lets perform our two sided t-test for H0: phi = 0.8 at 5% significance
 
 phiEst = paramEst(2);
 phiSE  = SE(2);
@@ -330,12 +341,12 @@ fprintf('   Standard Error   = %.4f\n', phiSE);
 fprintf('   Test statistic   = %.4f\n', tStat);
 
 if abs(tStat) > critVal
-    fprintf('   => Reject H0 at the 5%% level (|tStat| > 1.96).\n\n');
+    fprintf('   => We reject H0 at the 5%% level (|tStat| > 1.96).\n\n');
 else
-    fprintf('   => Fail to reject H0 at the 5%% level.\n\n');
+    fprintf('   => We fail to reject H0 at the 5%% level.\n\n');
 end
 
-%% Now we compyte the two-sided t-test 
+% Now we construct the p-value 
 pValue = 2 * (1 - normcdf(abs(tStat))); 
 
 fprintf('Test statistic for H0: phi = 0.8 is tStat = %.4f\n', tStat);
@@ -343,14 +354,14 @@ fprintf('Two-sided p-value = %.6f\n', pValue);
 
 % Interpretation:
 if pValue < 0.05
-    fprintf('=> p-value < 0.05 => Reject H0 at 5%% level.\n\n');
+    fprintf('=> p-value < 0.05 => We reject H0 at 5%% level.\n\n');
 else
-    fprintf('=> p-value >= 0.05 => Fail to reject H0 at 5%% level.\n\n');
+    fprintf('=> p-value >= 0.05 => We fail to reject H0 at 5%% level.\n\n');
 end
 
 %% Task 5: Quasi-Maximum Likelihood
-
-% 1st helper function for task 5: qml_contributions
+% 5.1
+% 1st helper function for task 5: qml_contributions (here we calculate the quasi-maximum likelihood contributions)
 function logL_contributions = qml_contributions(params, y)
     c      = params(1);
     phi    = params(2);
@@ -373,7 +384,7 @@ function logL_contributions = qml_contributions(params, y)
                          - 0.5 * (epsilons.^2 ./ sigma2);
 end
 
-% 2nd helper function: qml_l
+% 2nd helper function: qml_l (we construct the total likelihood, based on the contributions)
 function total_logL = qml_l(params, y)
    
     % Contributions from the helper function
@@ -383,26 +394,25 @@ function total_logL = qml_l(params, y)
     total_logL = -sum(logL_contributions);
 end
 
-T=800;
-rng(42);  % setting seed for reproducibility
-series = ARMA_simulator(T, c, phi, theta, nu, y0);
-y = series((burn_in+1):end);
+%% 5.3
+% We use the series that we stored in the first task
+y = ysafe;
 
-%%% Starting values
+% Starting values
 x0 = [1.5; 0.75; 0.5; 1]; 
 
-%%% Optimization settings
+% Optimization settings
 options = optimset('Display', 'iter', ...
                    'TolX', 1e-40, ...
                    'TolFun', 1e-40, ...
                    'MaxIter', 1e10, ...
                    'MaxFunEvals', 100000);
 
-%%% Algorithm and covariance matrix
+% Algorithm and covariance matrix
 algorithm = 1; 
 covPar = 3;    
 
-%%% Running the CML Toolbox
+% Running the CML Toolbox
 [x_qml, fval_qml, g_qml, cov_qml, retcode_qml] = ...
     CML(@qml_l,                    ...  
         @qml_contributions,        ...  
@@ -412,7 +422,7 @@ covPar = 3;
         covPar,                    ...  
         options);                  ...  
 
-%%% Results of the QML estimation
+% Results of the QML estimation
 fprintf('QML results (Gaussian assumption) for ARMA(1,1):\n');
 fprintf('Estimated parameters:\n');
 disp(x_qml);
@@ -422,9 +432,28 @@ disp(g_qml);
 fprintf('Covariance matrix (QML-based):\n');
 disp(cov_qml);
 fprintf('Exit flag: %d\n', retcode_qml);
+
+%% Task 5.4
+paramEstQML = x_qml;      
+covEstQML   = cov_qml;   
+
+% Standard errors
+SE_qml = sqrt(diag(covEstQML));
+
+% 95% confidence intervals
+zVal = 1.96;  
+CI_lower_qml = paramEstQML - zVal .* SE_qml;
+CI_upper_qml = paramEstQML + zVal .* SE_qml;
+
+paramNames = {'c','phi','theta','sigma^2'};
+fprintf('\nParameter Estimates with 95%% CIs:\n');
+for i = 1:length(paramEstQML)
+    fprintf('%s: Estimate = %.4f, SE = %.4f, CI = [%.4f, %.4f]\n', ...
+        paramNames{i}, paramEstQML(i), SE_qml(i), CI_lower_qml(i), CI_upper_qml(i));
+end
 %% Task 6: Comparing ML and QML
 
-%%% Task 6.1.
+% Task 6.1.
 % Parameters from task 1
 c = 2;              
 phi = 0.95;        
@@ -478,7 +507,7 @@ end
 
 disp('Simulation and estimation complete.');
 disp('ML estimates, QML estimates, and ML standard errors stored.');
-%%% Task 6.2: we compute kernel densities and visualize the densities of ML and QML estimators
+%% Task 6.2: we compute kernel densities and visualize the densities of ML and QML estimators
 params = {'c', '\phi', '\theta'};  
 
 colors = {'b', 'r'};        
