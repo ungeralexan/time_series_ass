@@ -261,9 +261,9 @@ fprintf('   Estimate of phi = %.4f\n', phiEst);
 fprintf('   Standard Error   = %.4f\n', phiSE);
 fprintf('   Test statistic   = %.4f\n', tStat);
 if abs(tStat) > critVal
-    fprintf('   => Reject H0 at the 5%% level (|tStat| > 1.96).\n\n');
+    fprintf('   => We reject H0 at the 5%% level (|tStat| > 1.96).\n\n');
 else
-    fprintf('   => Fail to reject H0 at the 5%% level.\n\n');
+    fprintf('   => We fail to reject H0 at the 5%% level.\n\n');
 end
 
 %% Task 4.5: computing two-Sided p-value
@@ -271,9 +271,9 @@ pValue = 2 * (1 - normcdf(abs(tStat)));
 fprintf('Test statistic for H0: phi = 0.8 is tStat = %.4f\n', tStat);
 fprintf('Two-sided p-value = %.6f\n', pValue);
 if pValue < 0.05
-    fprintf('=> p-value < 0.05 => Reject H0 at 5%% level.\n\n');
+    fprintf('=> p-value < 0.05 => We reject H0 at 5%% level.\n\n');
 else
-    fprintf('=> p-value >= 0.05 => Fail to reject H0 at 5%% level.\n\n');
+    fprintf('=> p-value >= 0.05 => We fail to reject H0 at 5%% level.\n\n');
 end
 
 %% Task 4.6: here we simulate a longer ARMA(1,1) series (T = 50,000) and re-estimate parameters
@@ -529,7 +529,7 @@ for i = 1:3
     plot(ML_x, ML_density, 'LineWidth', 2, 'Color', colors{1}, 'LineStyle', lineStyles{1});
     hold on;
 
-    plot(QML_x, QML_density, 'LineWidth', 2, 'Color', colors{2}, 'LineStyle', lineStyles{2});
+    plot(QML_x, QML_density, 'LineWidth', 2, 'Color', colors{2}, 'LineStyle', lineStyles{1});
 
     title(['Kernel Density of ', params{i}], 'FontSize', 14, 'FontWeight', 'bold'); 
     xlabel(params{i}, 'FontSize', 12, 'FontWeight', 'bold'); 
